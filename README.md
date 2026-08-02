@@ -1,7 +1,7 @@
 <img src="without.svg" /><br>
 <img src="https://kekse.biz/github.php?draw&override=github:math" />
 
-# **`Math`**`.{radix,size,time(,clock)}`
+# RADIX / BASE / UNIT conversions
 **TODO**!
 
 Here are some mathematical functions to extend the `Math` object

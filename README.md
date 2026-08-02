@@ -73,8 +73,10 @@ I hope I do remember of my features this moment:
 <br>
 
 ## History
-The reason for this big major version number (v**10.0.0**) is that I've created
-**many** versions for such **RADIX** logics.
+The reason I started with this high major version number (v**10.0.0**)
+is that I've created **many** versions for such **RADIX** logics before.
+
+Here I wanted to combine the best logics of all of these in one module.
 
 > [!TIP]
 > `RADIX` means (for me) **BASE** and **UNIT** conversions,

@@ -74,11 +74,13 @@ I hope I do remember of my features this moment:
 
 ## History
 The reason for this big major version number (v**10.0.0**) is that I've created
-**many** versions for such **RADIX** logic.
+**many** versions for such **RADIX** logics.
 
 > [!TIP]
-> `RADIX` means the **BASE** and it's conversions. Also regular numbers in their
-> systems, but also **unit**s, e.g. for **time** and **size**.
+> `RADIX` means (for me) **BASE** and **UNIT** conversions,
+> of course also between regular **number systems**.
+
+<br>
 
 So I wanted a new repository with the best features and functions, at least from
 my [last versions](#references)..

@@ -4,9 +4,11 @@
 # RADIX / BASE / UNIT conversions
 **TODO**!
 
-Here are some mathematical functions to extend the `Math` object
-as well as some other global objects in (**plain vanilla**)
-[JavaScript](https://ecma-international.org/).
+Mostly conversions between number systems and bases and units!
+
+So here are some mathematical functions to [extend](#exports) the
+`Math` object as well as some other global objects in
+(**plain vanilla**) [JavaScript](https://ecma-international.org/).
 
 <br>
 

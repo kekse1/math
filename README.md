@@ -82,7 +82,7 @@ Here I wanted to combine the best logics of all of these in one module.
 
 > [!TIP]
 > `RADIX` means (for me) **BASE** and **UNIT** conversions,
-> of course also between regular **number systems**.
+> of course also between the **number systems** themselves.
 
 <br>
 

@@ -8,7 +8,13 @@ Here are some mathematical functions to extend the `Math` object
 as well as some other global objects in (**plain vanilla**)
 [JavaScript](https://ecma-international.org/).
 
-<br><br>
+<br>
+
+> [!NOTE]
+> All about **RADIX** - base conversions between numbers
+> (and their systems) plus some units (times and sizes).
+
+<br><br><br>
 
 ## Index
 * [News](#news)

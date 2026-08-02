@@ -68,7 +68,7 @@ I hope I do remember of my features this moment:
 <br>
 
 ## Download
-* [**TODO**] [**`math.js`**](./src/math.js); v**10.0.0** (**2026-08-02**);
+* [**TODO**] [**`math.mjs`**](./src/math.mjs); v**10.0.0** (**2026-08-02**);
 
 <br>
 

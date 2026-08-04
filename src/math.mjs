@@ -15,7 +15,7 @@
  */
 
 //
-//set to (true) for automatic `math._extend(false)`.
+// set to (true) for automatic `math._extend(false)`.
 //
 const EXTEND = true;
 
@@ -25,19 +25,19 @@ const math = {
 	size: {},
 	time: {},
 	clock: null, // here's a special `class`. ...
-	_MOD: [ 'radix', 'size', 'time', 'clock' ],
-	_FALLBACK: 'kekse.biz',
+	MODULES: [ 'radix', 'size', 'time', 'clock' ],
+	FALLBACK: 'kekse.biz',
 	getExtensionSymbol: () => {
 		var symbol;
 
 		try
 		{
 			symbol = (import.meta?.url ||
-				math._FALLBACK);
+				math.FALLBACK);
 		}
 		catch(_err)
 		{
-			symbol = math._FALLBACK;
+			symbol = math.FALLBACK;
 		}
 
 		return Symbol.for(symbol);
@@ -179,7 +179,7 @@ math._extend = (_force = false) => {
 	}
 
 	//
-	for(const idx in math) if(math._MOD.includes(idx))
+	for(const idx in math) if(math.MODULES.includes(idx))
 	{
 		Reflect.defineProperty(
 			Math, idx, { value: math[idx] });

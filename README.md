@@ -1,7 +1,7 @@
 <img src="without.svg" /><br>
 <img src="https://kekse.biz/github.php?draw&override=github:math" />
 
-# RADIX / BASE / UNIT conversions
+# Some **`Math`** extensions (**JavaScript**)
 **TODO**!
 
 <br><br><br>

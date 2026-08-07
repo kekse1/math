@@ -4,18 +4,6 @@
 # RADIX / BASE / UNIT conversions
 **TODO**!
 
-Mostly conversions between number systems and bases and units!
-
-So here are some mathematical functions to [extend](#exports) the
-`Math` object as well as some other global objects in
-(**plain vanilla**) [JavaScript](https://ecma-international.org/).
-
-<br>
-
-> [!NOTE]
-> All about **RADIX** - base conversions between numbers
-> (and their systems) plus some units (times and sizes).
-
 <br><br><br>
 
 ## Index

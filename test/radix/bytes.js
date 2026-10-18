@@ -23,18 +23,18 @@ for(var i = 0; i < COUNT; ++i)
 
 for(var i = 0; i < COUNT; ++i)
 {
-	result[i] = { index: i + ' / ' + COUNT,
-		['(' + number[i] + ')']: Number.
+	result[i] = {
+		[number[i]]: Number.
 			toBytes(number[i],
 				true, false),
-		['(' + bigInt[i] + ')']: BigInt.
+		[bigInt[i]]: BigInt.
 			toBytes(bigInt[i],
 				true, false) };
 
 	strNum[i] = Number.fromBytes(
-		result[i]['(' + number[i] + ')']);
+		result[i][number[i]]);
 	strBig[i] = BigInt.fromBytes(
-		result[i]['(' + bigInt[i] + ')']);
+		result[i][bigInt[i]]);
 
 	result[i].number = strNum[i];
 	result[i].bigint = strBig[i];

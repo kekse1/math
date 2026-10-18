@@ -9,16 +9,8 @@ export default DEFAULT;
 
 //
 DEFAULT.throw = true;
-
-//
-DEFAULT.alphabet = {};
-DEFAULT.alphabet.half = '0123456789abcdefghijklmnopqrstuvwxyz';
-DEFAULT.alphabet.full = (DEFAULT.alphabet.half + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-
-//
 DEFAULT.radix = 10;
-
-//
+DEFAULT.full = false;
 DEFAULT.round = 0;
 
 //

@@ -4,7 +4,15 @@
  */
  
 //
-const	MAX_STRING_LENGTH = 128;
+const
+	ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+	LOOKUP = (() => { const result = new Uint8Array(256).fill(255);
+				for(var i = 0; i < ALPHABET.length; ++i)
+					result[ALPHABET.charCodeAt(i)] = i;
+				return result; })(),
+	RADIX_MIN = 2, RADIX_MAX = ALPHABET.length,
+	RADIX_HALF = 36, RADIX_FULL = 62,
+	MAX_STRING_LENGTH = 128;
 
 //
 const radix = {};
@@ -19,72 +27,46 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		configurable: false });
 
 	//
-	const	generateLookUpTable = (_alphabet, _uint8array = new Uint8Array(256)) => {
+	const	generateLookUpTable = (_alphabet = ALPHABET, _uint8array = new Uint8Array(256)) =>	{
 			if(!_uint8array) _uint8array = new
 				Uint8Array(256).fill(255);
 			for(var i = 0; i < _alphabet.length; ++i)
 				_uint8array[_alphabet.
 					charCodeAt(i)] = i;
-			return _uint8array;
-		};
+			return _uint8array;								};
 	
-	Reflect.defineProperty(radix, 'alphabet', {
-		get: () => ({ ... _default.alphabet }) });
-	Reflect.defineProperty(radix, 'ALPHABET', { value: [],
-		writable: false, configurable: false });
-	Reflect.defineProperty(radix, 'LOOKUP', {
-		value: new Uint8Array(256).fill(255),
-		writable: false, configurable: false });
+	Reflect.defineProperty(radix, 'alphabet', { value:
+		ALPHABET, writable: false, configurable: false });
+	Reflect.defineProperty(radix, 'LOOKUP', { value:
+		LOOKUP, writable: false, configurable: false });
 	
-	//
-	//TODO/maybe we should also check if all the (possible) alphabets
-	//		really start with the same characters or stuff!!?
-	//
-	(() => {
-		const	longest = [ 0, '' ];
-		var	len,
-			min = 2,
-			max = 0,
-			nul = '0';
+	Reflect.defineProperty(Number, 'RADIX_MIN', { value: RADIX_MIN,
+		writable: false, configurable: false });
+	Reflect.defineProperty(Number, 'RADIX_MAX', { value: RADIX_MAX,
+		writable: false, configurable: false });
+	Reflect.defineProperty(radix, 'MIN', { value: RADIX_MIN,
+		writable: false, configurable: false });
+	Reflect.defineProperty(radix, 'MAX', { value: RADIX_MAX,
+		writable: false, configurable: false });
 
-		for(const alpha in _default.alphabet)
+	//
+	const resultExceedsLimit = (_value, _throw = _default.throw) => {
+		if(_throw)
 		{
-			if(_default.alphabet[alpha][0] !== nul)
-			{
-				throw new Error('Unexpected');
-			}
-			
-			radix[alpha.toUpperCase()] = len =
-				_default.alphabet[alpha].length;
-			
-			if(len > max)
-			{
-				max = len;
-			}
-			
-			if(len > longest[0])
-			{
-				longest[0] = len;
-				longest[1] = alpha;
-			}
+			throw new Error('Value exceeds limit (' +
+				_value.toLocaleString() + ' / ' +
+				Number.MAX_SAFE_INTEGER.
+				toLocaleString() + ')');
 		}
-
-		Reflect.defineProperty(radix, 'NULL', { value: nul,
-			writable: false, configurable: false });
-		Reflect.defineProperty(radix, 'MIN', { value: min,
-			writable: false, configurable: false });
-		Reflect.defineProperty(radix, 'MAX', { value: max,
-			writable: false, configurable: false });
-
-		generateLookUpTable(_default.
-			alphabet[longest[1]],
-				radix.LOOKUP);
-	})();
+		
+		return null;
+	}
 	
+	//
+	//TODO/beide folgneden erstmal testen, bevor's weiter geht..
 	//
 	radix.fromBytes = {
-		// w/o (45)'-' and w/o (46)'.'!
-		'Number': (_bytes) => {
+		'Number': (_bytes, _full = _default.full, _throw = _default.throw) => { // w/o (45)'-' and w/o (46)'.', if NOT _full.
 			if(typeof _bytes === 'string')
 			{
 				_bytes = Uint8Array.create(_bytes);
@@ -102,15 +84,88 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				
 				return null;
 			}
-			
+
+			const	negative = (!_full && _bytes[0] === 45),
+				end = (negative ? 1 : 0);
 			var	result = 0,
-				mul = 1;
+				mul = 1,
+				split;
+
+			if(_full) for(var i = _bytes.length - 1; i >= 0; --i)
+			{
+				if((result += (_bytes[i] * mul)) > Number.MAX_SAFE_INTEGER)
+				{
+					return resultExceedsLimit(result, _throw);
+					//break;
+				}
+				
+				mul *= 256;
+			}
+			else
+			{
+				split = -1;
+				
+				for(var i = end; i < _bytes.length; ++i)
+				{
+					if(_bytes[i] === 46)
+					{
+						if(split === -1)
+						{
+							split = i;
+						}
+						else if(_throw)
+						{
+							throw new Error('Invalid floating point byte code');
+						}
+						else
+						{
+							return null;
+						}
+					}
+				}
+				
+				var	a, b;
+				
+				if(split > -1)
+				{
+					a = _bytes.slice(0, split);
+					b = _bytes.slice(split);
+				}
+				else
+				{
+					a = _bytes;
+					b = null;
+				}
+				
+				for(var i = a.length - 1; i >= end; --i)
+				{
+					if((result += (a[i] * mul)) > Number.MAX_SAFE_INTEGER)
+					{
+						return resultExceedsLimit(result, _throw);
+					}
+					
+					mul *= 254;
+				}
+				
+				if(b)
+				{
+					mul = (1 / 254);
+					
+					for(var i = 0; i < b.length; ++i)
+					{
+						result += (b[i] * mul);
+						mul /= 254;
+					}
+				}
+			}
 			
-			//.....
-			//..
+			if(negative)
+			{
+				result = (-result || 0);
+			}
+			
+			return result;
 		},
-		// here only positive integers,
-		// full bandwidth of (256) bytes.
 		'BigInt': (_bytes) => {
 			if(typeof _bytes === 'string')
 			{
@@ -129,12 +184,17 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				
 				return null;
 			}
-			
+
 			var	result = 0n,
 				mul = 1n;
 			
-			//.....
-			//..
+			for(var i = 0; i < _bytes.length; ++i)
+			{
+				result += (BigInt(_bytes[i]) * mul);
+				mul *= 256n;
+			}
+			
+			return result;
 		}
 	};
 
@@ -294,18 +354,36 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	}});
 	
 	//
-	radix.isRadix = (_item, _radix = null) => {
-		if(!Number.isFinite(_item))
+	radix.isRadix = (_value) => {
+		if(!Number.isFinite(_value))
 		{
 			return false;
 		}
 		
-		if((_item % 1) !== 0)
+		if((_value % 1) !== 0)
 		{
 			return false;
 		}
 		
-		return (_item >= radix.MIN && _item <= radix.MAX);
+		return (_value >= RADIX_MIN && _value <= RADIX_MAX);
+	};
+	
+	radix.isHalfRadix = (_value) => {
+		if(!radix.isRadix(_value))
+		{
+			return null;
+		}
+		
+		return (_value <= RADIX_HALF);
+	};
+	
+	radix.isFullRadix = (_value) => {
+		if(!radix.isRadix(_value))
+		{
+			return null;
+		}
+		
+		return (_value > RADIX_HALF);
 	};
 	
 	radix.sign = (_string) => {
@@ -341,14 +419,14 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			return [ _string, _fallback || null ];
 		}
 		
-		var	radix = Number(_string.substring(1, idx));
+		const	result = Number(_string.substring(1, idx));
 		
-		if(!radix.isRadix(radix))
+		if(!radix.isRadix(result))
 		{
 			return [ _string, _fallback || null ];
 		}
 
-		return [ _string.substr(idx + 1), radix ];
+		return [ _string.substr(idx + 1), result ];
 	};
 
 	radix.isNumeric = (_string, _radix = _default.radix) => {
@@ -378,7 +456,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			return false;
 		}
 		
-		const	[ a, b, negative, radix ] = prepared;
+		const	[ a, b, negative, rdx ] = prepared;
 		var	index;
 		
 		//
@@ -386,7 +464,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		{
 			index = LOOKUP[a.charCodeAt(i)];
 			
-			if((index + 1) > radix)
+			if((index + 1) > rdx)
 			{
 				return false;
 			}
@@ -396,7 +474,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		{
 			index = LOOKUP[b.charCodeAt(i)];
 			
-			if((index + 1) > radix)
+			if((index + 1) > rdx)
 			{
 				return false;
 			}
@@ -430,7 +508,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		[ _string, _radix ] = radix.cast(_string, _radix);
 		[ a, negative ] = radix.sign(a);
 
-		while(a[count] === radix.NULL)
+		while(a[count] === ALPHABET[0])
 		{
 			++count;
 		}
@@ -444,7 +522,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		{
 			count = 0;
 			
-			while(b[b.length - count - 1] === radix.NULL)
+			while(b[b.length - count - 1] === ALPHABET[0])
 			{
 				++count;
 			}
@@ -459,7 +537,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			b = '';
 		}
 		
-		if(_radix <= radix.HALF)
+		if(radix.isHalfRadix(_radix))
 		{
 			a = a.toLowerCase();
 			b = b.toLowerCase();
@@ -470,6 +548,8 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	
 	//
 	Reflect.defineProperty(Number, 'isRadix', { value: radix.isRadix });
+	Reflect.defineProperty(Number, 'isHalfRadix', { value: radix.isHalfRadix });
+	Reflect.defineProperty(Number, 'isFullRadix', { value: radix.isFullRadix });
 	Reflect.defineProperty(Number, 'sign', { value: radix.sign });
 	Reflect.defineProperty(Number, 'cast', { value: radix.cast });
 

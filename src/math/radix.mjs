@@ -6,10 +6,32 @@
 //
 const
 	ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-	LOOKUP = (() => { const result = new Uint8Array(256).fill(255);
-				for(var i = 0; i < ALPHABET.length; ++i)
-					result[ALPHABET.charCodeAt(i)] = i;
+	LOOKUP = (() => {
+		const result = new Uint8Array(256).fill(255);
+		for(var i = 0; i < ALPHABET.length; ++i)
+			result[ALPHABET.charCodeAt(i)] = i;
+		return result; })(),
+	BYTE_ALPHA = (() => {
+		var result = '';
+		for(var i = 0, j = 0; i < 256; ++i, ++j)
+		{
+			if(i === 45 || i === 46)
+			{
+				--j;
+			}
+			else
+			{
+				result += String.fromCharCode(i);
+			}
+		}
+		
+		return result;
+	})(),
+	BYTE_LOOKUP = (() => { const result = new Uint8Array(256).fill(255);
+				for(var i = 0; i < BYTE_ALPHA.length; ++i)
+					result[BYTE_ALPHA.charCodeAt(i)] = i;
 				return result; })(),
+	
 	RADIX_MIN = 2, RADIX_MAX = ALPHABET.length,
 	RADIX_HALF = 36, RADIX_FULL = 62,
 	MAX_STRING_LENGTH = 128;
@@ -27,14 +49,6 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		configurable: false });
 
 	//
-	const	generateLookUpTable = (_alphabet = ALPHABET, _uint8array = new Uint8Array(256)) =>	{
-			if(!_uint8array) _uint8array = new
-				Uint8Array(256).fill(255);
-			for(var i = 0; i < _alphabet.length; ++i)
-				_uint8array[_alphabet.
-					charCodeAt(i)] = i;
-			return _uint8array;								};
-	
 	Reflect.defineProperty(radix, 'alphabet', { value:
 		ALPHABET, writable: false, configurable: false });
 	Reflect.defineProperty(radix, 'LOOKUP', { value:
@@ -62,177 +76,161 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return null;
 	}
 	
+	radix.zigzag = { BigInt: {}, Number: {} };
+	radix.zigzag.BigInt.encode = (_n) => ((_n >= 0n) ? (_n * 2n) : (-_n * 2n - 1n));
+	radix.zigzag.BigInt.decode = (_n) => (((_n && 1n) === 0n) ? (_n / 2n) : -((_n + 1n) / 2n));
+	radix.zigzag.Number.encode = (_n) => ((_n >= 0) ? (_n * 2) : (-_n * 2 - 1));
+	radix.zigzag.Number.decode = (_n) => (((_n && 1) === 0) ? (_n / 2) : -((_n + 1) / 2));
+
+	Number.zigzag = {}; BigInt.zigzag = {};
+	
+	Reflect.defineProperty(Number.zigzag, 'encode', {
+			value: radix.zigzag.Number.encode });
+	Reflect.defineProperty(Number.zigzag, 'decode', {
+			value: radix.zigzag.Number.decode });
+	Reflect.defineProperty(BigInt.zigzag, 'encode', {
+			value: radix.zigzag.BigInt.encode });
+	Reflect.defineProperty(BigInt.zigzag, 'decode', {
+			value: radix.zigzag.BigInt.decode });
+
+	const checkBytes = (_bytes, _throw = _default.throw) => {
+		if(typeof _bytes === 'string')
+		{
+			return Uint8Array.create(_bytes);
+		}
+		
+		if(isDataArray(_bytes))
+		{
+			return _bytes;
+		}
+		
+		if(Number.isFinite(_bytes))
+		{
+			return new Uint8Array([
+				Math.trunc(Math.abs(_bytes)) ]);
+		}
+
+		if(_throw)
+		{
+			throw new Error('Invalid _bytes argument');
+		}
+		
+		return null;
+	};
+	
 	//
-	//TODO/beide folgneden erstmal testen, bevor's weiter geht..
+	//TODO/bedenke evtl. weitere parse()-routine mit hilfs-func. etc.!??????
 	//
 	radix.fromBytes = {
-		'Number': (_bytes, _full = _default.full, _throw = _default.throw) => { // w/o (45)'-' and w/o (46)'.', if NOT _full.
-			if(typeof _bytes === 'string')
+		Number: (_bytes, _throw = _default.throw) => {
+			if((_bytes = checkBytes(_bytes, _throw)) === null)
 			{
-				_bytes = Uint8Array.create(_bytes);
-			}
-			else if(Number.isFinite(_bytes))
-			{
-				_bytes = new Uint8Array([ _bytes ]);
-			}
-			else if(! (Reflect.was(_bytes, 'Uint8Array') || Reflect.was(_bytes, 'Uint8ClampedArray')))
-			{
-				if(_default.throw)
-				{
-					throw new Error('Invalid argument');
-				}
-				
 				return null;
 			}
 
-			const	negative = (!_full && _bytes[0] === 45),
-				end = (negative ? 1 : 0);
 			var	result = 0,
-				mul = 1,
-				split;
-
-			if(_full) for(var i = _bytes.length - 1; i >= 0; --i)
-			{
-				if((result += (_bytes[i] * mul)) > Number.MAX_SAFE_INTEGER)
-				{
-					return resultExceedsLimit(result, _throw);
-					//break;
-				}
-				
-				mul *= 256;
-			}
-			else
-			{
-				split = -1;
-				
-				for(var i = end; i < _bytes.length; ++i)
-				{
-					if(_bytes[i] === 46)
-					{
-						if(split === -1)
-						{
-							split = i;
-						}
-						else if(_throw)
-						{
-							throw new Error('Invalid floating point byte code');
-						}
-						else
-						{
-							return null;
-						}
-					}
-				}
-				
-				var	a, b;
-				
-				if(split > -1)
-				{
-					a = _bytes.slice(0, split);
-					b = _bytes.slice(split);
-				}
-				else
-				{
-					a = _bytes;
-					b = null;
-				}
-				
-				for(var i = a.length - 1; i >= end; --i)
-				{
-					if((result += (a[i] * mul)) > Number.MAX_SAFE_INTEGER)
-					{
-						return resultExceedsLimit(result, _throw);
-					}
-					
-					mul *= 254;
-				}
-				
-				if(b)
-				{
-					mul = (1 / 254);
-					
-					for(var i = 0; i < b.length; ++i)
-					{
-						result += (b[i] * mul);
-						mul /= 254;
-					}
-				}
-			}
+				mul = 1;
 			
-			if(negative)
-			{
-				result = (-result || 0);
-			}
+			//...
+			//..
 			
-			return result;
+			//
+			return radix.zigzag.Number.decode(result);
 		},
-		'BigInt': (_bytes) => {
-			if(typeof _bytes === 'string')
+		BigInt: (_bytes, _throw = _default.throw) => {
+			if((_bytes = checkBytes(_bytes, _throw)) === null)
 			{
-				_bytes = Uint8Array.create(_bytes);
-			}
-			else if(Number.isFinite(_bytes))
-			{
-				_bytes = new Uint8Array([ _bytes ]);
-			}
-			else if(! (Reflect.was(_bytes, 'Uint8Array') || Reflect.was(_bytes, 'Uint8ClampedArray')))
-			{
-				if(_default.throw)
-				{
-					throw new Error('Invalid argument');
-				}
-				
 				return null;
 			}
 
 			var	result = 0n,
 				mul = 1n;
 			
-			for(var i = 0; i < _bytes.length; ++i)
-			{
-				result += (BigInt(_bytes[i]) * mul);
-				mul *= 256n;
-			}
+			//...
+			//..
 			
-			return result;
+			//
+			return radix.zigzag.BigInt.decode(result);
 		}
 	};
-
-	radix.toBytes = {
-		'Number': (_value) => {
-			if(!Number.isFinite(_value))
-			{
-				if(_default.throw)
-				{
-					throw new Error('Invalid argument');
-				}
-				
-				return null;
-			}
-			
-			var	result = '';
-			
-			//...
-			
-			return Uint8Array.create(result);
-		},
-		'BigInt': (_value) => {
-			if(typeof _value !== 'bigint')
-			{
-				if(_default.throw)
-				{
-					throw new Error('Invalid argument');
-				}
-				
-				return null;
-			}
-			
-			var	result = '';
-			
-			//...
-			
-			return Uint8Array.create(result);
+	
+	radix.toBytes = (_value, _string = _default.string, _throw = _default.throw) => {
+		if(typeof _value === 'bigint')
+		{
+			return radix.toBytes.BigInt(_value, _string, _throw);
 		}
+		
+		if(Number.isFinite(_value))
+		{
+			return radix.toBytes.Number(_value, _string, _throw);
+		}
+		
+		if(_throw)
+		{
+			throw new Error('Invalid value argument');
+		}
+		
+		return null;
+	};
+	
+	radix.toBytes.BigInt = (_value, _string = _default.string, _throw = _default.throw) => {
+		var	rest = radix.zigzag.BigInt.encode(_value),
+			result;
+
+		if(rest === 0n)
+		{
+			result = ALPHABET[0];
+		}
+		else
+		{
+			result = '';
+			
+			do
+			{
+				result = (String.fromCharCode(
+					Number(rest % 256n)) +
+						result);
+				rest /= 256n;
+			}
+			while(rest >= 1n);
+		}
+		
+		if(_string)
+		{
+			return result;
+		}
+		
+		return Uint8Array.create(result);
+	};
+
+	radix.toBytes.Number = (_value, _string = _default.string, _throw = _default.throw) => {
+		var	rest = radix.zigzag.Number.encode(_value),
+			result;
+
+		if(rest === 0)
+		{
+			result = ALPHABET[0];
+		}
+		else
+		{
+			result = '';
+			
+			do
+			{
+				result = (String.fromCharCode(
+					Math.trunc(rest % 256)) +
+						result);
+				rest /= 256;
+			}
+			while(rest >= 1);
+		}
+		
+		if(_string)
+		{
+			return result;
+		}
+		
+		return Uint8Array.create(result);
 	};
 
 	Reflect.defineProperty(Number, 'fromBytes', {
@@ -244,14 +242,15 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	Reflect.defineProperty(BigInt, 'toBytes', {
 		value: radix.toBytes.BigInt });
 	Reflect.defineProperty(Number.prototype, 'toBytes', {
-		value: function(... _args) { return radix.
-			toBytes.Number(this.valueOf(), ... _args); }});
+		value: function(... _args) { return radix.toBytes.
+			Number(this.valueOf(), ... _args); }});
 	Reflect.defineProperty(BigInt.prototype, 'toBytes', {
-		value: function(... _args) { return radix.
-			toBytes.BigInt(this.valueOf(), ... _args); }});
+		value: function(... _args) { return radix.toBytes.
+			BigInt(this.valueOf(), ... _args); }});
 
 	//
 	//TODO/see (NEW) LOOK-UP-TABLE!!1 ;-D
+	//TODO/don't forget ZIGZAG - MAYBE?! ...
 	//
 	radix.parse = {
 		'Number': () => {

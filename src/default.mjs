@@ -10,8 +10,9 @@ export default DEFAULT;
 //
 DEFAULT.throw = true;
 DEFAULT.radix = 10;
-DEFAULT.full = false;
 DEFAULT.round = 0;
+DEFAULT.string = false;
+DEFAULT.unsigned = false;
 
 //
 

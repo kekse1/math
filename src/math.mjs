@@ -49,20 +49,29 @@ import	code from './math/code.mjs';
 //
 
 //
-if(DEFAULT_INITIALIZE) for(const module in math)
+math.initialize = () => {
+	for(const module in math)
+	{
+		if(typeof math[module].initialize !== 'function')
+		{
+			continue;
+		}
+
+		if(!math[module][math.SYMBOL])
+		{
+			math[module].initialize(math, DEFAULT);
+			math[module][math.SYMBOL] = new Date();
+		}
+
+		delete math[module].initialize;
+	}
+	
+	delete math.initialize;
+};
+
+if(DEFAULT_INITIALIZE)
 {
-	if(typeof math[module].initialize !== 'function')
-	{
-		continue;
-	}
-
-	if(!math[module][math.SYMBOL])
-	{
-		math[module].initialize(math, DEFAULT);
-		math[module][math.SYMBOL] = new Date();
-	}
-
-	delete math[module].initialize;
+	math.initialize();
 }
 
 //

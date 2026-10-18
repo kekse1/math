@@ -9,12 +9,13 @@ export default helper;
 
 //
 helper.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
-	Reflect.defineProperty(Reflect, 'is', { value: (... _args) => {
-		throw new Error('todo');
+	Reflect.defineProperty(globalThis, 'isDataArray', { value: (_item) => {
+		return (_item instanceof Uint8Array || _item instanceof Uint8ClampedArray);
 	}});
-	
-	Reflect.defineProperty(Reflect, 'was', { value: (... _args) => {
-		throw new Error('todo');
+
+	Reflect.defineProperty(globalThis, 'isData', { value: (_item) => {
+		if(typeof _item === 'string') return true;
+		return globalThis.isDataArray(_item);
 	}});
 	
 	Reflect.defineProperty(Uint8Array, 'create', { value: (... _args) => {
@@ -31,7 +32,7 @@ helper.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 					
 					for(var j = 0; j < _args[i].length; ++j)
 					{
-						item[j] = _args.charCodeAt(j);
+						item[j] = _args[i].charCodeAt(j);
 					}
 
 					length += (_args[i] = item).length;
@@ -41,7 +42,7 @@ helper.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 					_args.splice(i--, 1);
 				}
 			}
-			else if(Reflect.was(_args[i], 'Uint8Array') || Reflect.was(_args[i], 'Uint8ClampedArray'))
+			else if(isDataArray(_args[i]))
 			{
 				if(_args[i].length > 0)
 				{
@@ -102,7 +103,7 @@ helper.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			{
 				result += _args[i];
 			}
-			else if(Reflect.was(_args[i], 'Uint8Array') || Reflect.was(_args[i], 'Uint8ClampedArray'))
+			else if(isDataArray(_args[i]))
 			{
 				for(var j = 0; j < _args[i].length; ++j)
 				{

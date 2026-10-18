@@ -17,8 +17,10 @@ const	number = new Array(COUNT),
 //
 for(var i = 0; i < COUNT; ++i)
 {
-	number[i] = Math.round(Math.random.float(65536, -65536), ROUND);
-	bigInt[i] = BigInt(Math.trunc(number[i]));
+	number[i] = Math.round(Math.random.
+		float(65535, -65536), ROUND);
+	bigInt[i] = BigInt(Math.trunc(
+				number[i]));
 }
 
 for(var i = 0; i < COUNT; ++i)
@@ -26,10 +28,10 @@ for(var i = 0; i < COUNT; ++i)
 	result[i] = {
 		[number[i]]: Number.
 			toBytes(number[i],
-				true, false),
+				false, false),
 		[bigInt[i]]: BigInt.
 			toBytes(bigInt[i],
-				true, false) };
+				false, false) };
 
 	strNum[i] = Number.fromBytes(
 		result[i][number[i]]);

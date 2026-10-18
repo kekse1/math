@@ -52,7 +52,14 @@ import	code from './math/code.mjs';
 math.initialize = () => {
 	for(const module in math)
 	{
-		if(typeof math[module].initialize !== 'function')
+		try
+		{
+			if(typeof math[module].initialize !== 'function')
+			{
+				continue;
+			}
+		}
+		catch(_err)
 		{
 			continue;
 		}

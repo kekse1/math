@@ -380,8 +380,8 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			}
 		}
 
-		return [ _string.substr(count),
-			  negative ];
+		return ((negative ? '-' : '') +
+			_string.substr(count));
 	};
 	
 	radix.cast = (_string, _fallback = _default.radix) => {
@@ -483,8 +483,18 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			count = 0,
 			negative;
 
-		[ _string, _radix ] = radix.cast(_string, _radix);
-		[ a, negative ] = radix.sign(a);
+		[ _string, _radix ] = radix.cast(
+			_string, _radix);
+
+		if((a = radix.sign(a))[0] === '-')
+		{
+			negative = true;
+			a = a.substr(1);
+		}
+		else
+		{
+			negative = false;
+		}
 
 		while(a[count] === ALPHABET[0])
 		{

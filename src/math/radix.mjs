@@ -11,27 +11,6 @@ const
 		for(var i = 0; i < ALPHABET.length; ++i)
 			result[ALPHABET.charCodeAt(i)] = i;
 		return result; })(),
-	BYTE_ALPHA = (() => {
-		var result = '';
-		for(var i = 0, j = 0; i < 256; ++i, ++j)
-		{
-			if(i === 45 || i === 46)
-			{
-				--j;
-			}
-			else
-			{
-				result += String.fromCharCode(i);
-			}
-		}
-		
-		return result;
-	})(),
-	BYTE_LOOKUP = (() => { const result = new Uint8Array(256).fill(255);
-				for(var i = 0; i < BYTE_ALPHA.length; ++i)
-					result[BYTE_ALPHA.charCodeAt(i)] = i;
-				return result; })(),
-	
 	RADIX_MIN = 2, RADIX_MAX = ALPHABET.length,
 	RADIX_HALF = 36, RADIX_FULL = 62,
 	MAX_STRING_LENGTH = 128;

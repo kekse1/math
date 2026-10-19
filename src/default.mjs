@@ -12,7 +12,7 @@ DEFAULT.throw = true;
 DEFAULT.radix = 10;
 DEFAULT.round = 0;
 DEFAULT.string = false;
-DEFAULT.unsigned = false;
+DEFAULT.endianness = 'l';
 
 //
 

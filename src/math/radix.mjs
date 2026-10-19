@@ -43,34 +43,62 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		writable: false, configurable: false });
 
 	//
-	const resultExceedsLimit = (_value, _throw = _default.throw) => {
+	radix.zigzag = {};
+	
+	radix.zigzag.encode = (_value, _throw = _default.throw) => {
+		if(Number.isFinite(_value))
+		{
+			return radix.zigzag.encode.Number(_value);
+		}
+		
+		if(typeof _value === 'bigint')
+		{
+			return radix.zigzag.encode.BigInt(_value);
+		}
+		
 		if(_throw)
 		{
-			throw new Error('Value exceeds limit (' +
-				_value.toLocaleString() + ' / ' +
-				Number.MAX_SAFE_INTEGER.
-				toLocaleString() + ')');
+			throw new Error('Invalid _value argument');
 		}
 		
 		return null;
-	}
+	};
 	
-	radix.zigzag = { BigInt: {}, Number: {} };
-	radix.zigzag.BigInt.encode = (_n) => ((_n >= 0n) ? (_n * 2n) : (-_n * 2n - 1n));
-	radix.zigzag.BigInt.decode = (_n) => (((_n && 1n) === 0n) ? (_n / 2n) : -((_n + 1n) / 2n));
-	radix.zigzag.Number.encode = (_n) => ((_n >= 0) ? (_n * 2) : (-_n * 2 - 1));
-	radix.zigzag.Number.decode = (_n) => (((_n && 1) === 0) ? (_n / 2) : -((_n + 1) / 2));
+	radix.zigzag.decode = (_value, _throw = _default.throw) => {
+		if(Number.isFinite(_value))
+		{
+			return radix.zigzag.decode.Number(_value);
+		}
+		
+		if(typeof _value === 'bigint')
+		{
+			return radix.zigzag.decode.BigInt(_value);
+		}
+		
+		if(_throw)
+		{
+			throw new Error('Invalid _value argument');
+		}
+		
+		return null;
+	};
+	
+	radix.zigzag.encode.Number = (_n) => ((_n >= 0) ? (_n * 2) : (-_n * 2 - 1));
+	radix.zigzag.encode.BigInt = (_n) => ((_n >= 0n) ? (_n * 2n) : (-_n * 2n - 1n));
+	radix.zigzag.decode.Number = (_n) => (((_n && 1) === 0) ? (_n / 2) : -((_n + 1) / 2));
+	radix.zigzag.decode.BigInt = (_n) => (((_n && 1n) === 0n) ? (_n / 2n) : -((_n + 1n) / 2n));
 
-	Number.zigzag = {}; BigInt.zigzag = {};
+	Number.zigzag = {};
+	BigInt.zigzag = {};
 	
 	Reflect.defineProperty(Number.zigzag, 'encode', {
-			value: radix.zigzag.Number.encode });
+			value: radix.zigzag.encode.Number });
 	Reflect.defineProperty(Number.zigzag, 'decode', {
-			value: radix.zigzag.Number.decode });
+			value: radix.zigzag.decode.Number });
 	Reflect.defineProperty(BigInt.zigzag, 'encode', {
-			value: radix.zigzag.BigInt.encode });
+			value: radix.zigzag.encode.BigInt });
 	Reflect.defineProperty(BigInt.zigzag, 'decode', {
-			value: radix.zigzag.BigInt.decode });
+			value: radix.zigzag.decode.BigInt });
 
 	const checkBytes = (_bytes, _throw = _default.throw) => {
 		if(typeof _bytes === 'string')
@@ -97,9 +125,6 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return null;
 	};
 	
-	//
-	//TODO/bedenke evtl. weitere parse()-routine mit hilfs-func. etc.!??????
-	//
 	radix.fromBytes = {
 		Number: (_bytes, _throw = _default.throw) => {
 			if((_bytes = checkBytes(_bytes, _throw)) === null)
@@ -110,11 +135,25 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			var	result = 0,
 				mul = 1;
 			
-			//...
-			//..
-			
-			//
-			return radix.zigzag.Number.decode(result);
+			switch(_default.endianness[0].toLowerCase())
+			{
+				case 'l': for(var i = 0; i < _bytes.length; ++i)
+					{
+						result += (_bytes[i] * mul);
+						mul *= 256;
+					}
+					break;
+				case 'b': for(var i = _bytes.length - 1; i >= 0; --i)
+					{
+						result += (_bytes[i] * mul);
+						mul *= 256;
+					}
+					break;
+				default:
+					throw new Error('Invalid configuration');
+			}
+
+			return radix.zigzag.decode.Number(result);
 		},
 		BigInt: (_bytes, _throw = _default.throw) => {
 			if((_bytes = checkBytes(_bytes, _throw)) === null)
@@ -125,11 +164,25 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			var	result = 0n,
 				mul = 1n;
 			
-			//...
-			//..
-			
-			//
-			return radix.zigzag.BigInt.decode(result);
+			switch(_default.endianness[0].toLowerCase())
+			{
+				case 'l': for(var i = 0; i < _bytes.length; ++i)
+					{
+						result += (BigInt(_bytes[i]) * mul);
+						mul *= 256n;
+					}
+					break;
+				case 'b': for(var i = _bytes.length - 1; i >= 0; --i)
+					{
+						result += (BigInt(_bytes[i]) * mul);
+						mul *= 256n;
+					}
+					break;
+				default:
+					throw new Error('Invalid configuration');
+			}
+
+			return radix.zigzag.decode.BigInt(result);
 		}
 	};
 	
@@ -153,7 +206,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	radix.toBytes.BigInt = (_value, _string = _default.string, _throw = _default.throw) => {
-		var	rest = radix.zigzag.BigInt.encode(_value),
+		var	rest = radix.zigzag.encode.BigInt(_value),
 			result;
 
 		if(rest === 0n)
@@ -183,7 +236,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 
 	radix.toBytes.Number = (_value, _string = _default.string, _throw = _default.throw) => {
-		var	rest = radix.zigzag.Number.encode(_value),
+		var	rest = radix.zigzag.encode.Number(_value),
 			result;
 
 		if(rest === 0)

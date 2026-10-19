@@ -85,8 +85,8 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	
 	radix.zigzag.encode.Number = (_n) => ((_n >= 0) ? (_n * 2) : (-_n * 2 - 1));
 	radix.zigzag.encode.BigInt = (_n) => ((_n >= 0n) ? (_n * 2n) : (-_n * 2n - 1n));
-	radix.zigzag.decode.Number = (_n) => (((_n && 1) === 0) ? (_n / 2) : -((_n + 1) / 2));
-	radix.zigzag.decode.BigInt = (_n) => (((_n && 1n) === 0n) ? (_n / 2n) : -((_n + 1n) / 2n));
+	radix.zigzag.decode.Number = (_n) => (((_n & 1) === 0) ? (_n / 2) : -((_n + 1) / 2));
+	radix.zigzag.decode.BigInt = (_n) => (((_n & 1n) === 0n) ? (_n / 2n) : -((_n + 1n) / 2n));
 
 	Number.zigzag = {};
 	BigInt.zigzag = {};
@@ -126,7 +126,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	radix.fromBytes = {
-		Number: (_bytes, _throw = _default.throw) => {
+		Number: (_bytes, _endianness = _default.endianness, _throw = _default.throw) => {
 			if((_bytes = checkBytes(_bytes, _throw)) === null)
 			{
 				return null;
@@ -135,27 +135,29 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			var	result = 0,
 				mul = 1;
 			
-			switch(_default.endianness[0].toLowerCase())
+			switch(_endianness[0].toLowerCase())
 			{
-				case 'l': for(var i = 0; i < _bytes.length; ++i)
+				case 'b':
+					for(var i = _bytes.length - 1; i >= 0; --i)
 					{
 						result += (_bytes[i] * mul);
 						mul *= 256;
 					}
 					break;
-				case 'b': for(var i = _bytes.length - 1; i >= 0; --i)
+				case 'l':
+					for(var i = 0; i < _bytes.length; ++i)
 					{
 						result += (_bytes[i] * mul);
 						mul *= 256;
 					}
 					break;
 				default:
-					throw new Error('Invalid configuration');
+					throw new Error('Invalid _endianness argument/configuration');
 			}
 
 			return radix.zigzag.decode.Number(result);
 		},
-		BigInt: (_bytes, _throw = _default.throw) => {
+		BigInt: (_bytes, _endianness = _default.endianness, _throw = _default.throw) => {
 			if((_bytes = checkBytes(_bytes, _throw)) === null)
 			{
 				return null;
@@ -164,37 +166,41 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			var	result = 0n,
 				mul = 1n;
 			
-			switch(_default.endianness[0].toLowerCase())
+			switch(_endianness[0].toLowerCase())
 			{
-				case 'l': for(var i = 0; i < _bytes.length; ++i)
+				case 'b':
+					for(var i = _bytes.length - 1; i >= 0; --i)
 					{
 						result += (BigInt(_bytes[i]) * mul);
 						mul *= 256n;
 					}
 					break;
-				case 'b': for(var i = _bytes.length - 1; i >= 0; --i)
+				case 'l':
+					for(var i = 0; i < _bytes.length; ++i)
 					{
 						result += (BigInt(_bytes[i]) * mul);
 						mul *= 256n;
 					}
 					break;
 				default:
-					throw new Error('Invalid configuration');
+					throw new Error('Invalid _endianness argument/configuration');
 			}
 
 			return radix.zigzag.decode.BigInt(result);
 		}
 	};
 	
-	radix.toBytes = (_value, _string = _default.string, _throw = _default.throw) => {
+	radix.toBytes = (_value, _endianness = _default.endianness, _throw = _default.throw) => {
 		if(typeof _value === 'bigint')
 		{
-			return radix.toBytes.BigInt(_value, _string, _throw);
+			return radix.toBytes.BigInt(
+				_value, _endianness, _throw);
 		}
 		
 		if(Number.isFinite(_value))
 		{
-			return radix.toBytes.Number(_value, _string, _throw);
+			return radix.toBytes.Number(
+				_value, _endianness, _throw);
 		}
 		
 		if(_throw)
@@ -205,64 +211,86 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return null;
 	};
 	
-	radix.toBytes.BigInt = (_value, _string = _default.string, _throw = _default.throw) => {
-		var	rest = radix.zigzag.encode.BigInt(_value),
-			result;
+	radix.toBytes.BigInt = (_value, _endianness = _default.endianness, _throw = _default.throw) => {
+		const	result = [];
+		var	rest = radix.zigzag.encode.BigInt(_value);
 
 		if(rest === 0n)
 		{
-			result = ALPHABET[0];
+			result = [ 0 ];
 		}
-		else
+		else switch(_endianness[0].toLowerCase())
 		{
-			result = '';
-			
-			do
-			{
-				result = (String.fromCharCode(
-					Number(rest % 256n)) +
-						result);
-				rest /= 256n;
-			}
-			while(rest >= 1n);
+			case 'b':
+				do
+				{
+					result.unshift(Number(rest % 256n));
+					rest /= 256n;
+				}
+				while(rest >= 1n);
+				break;
+			case 'l':
+				do
+				{
+					result.push(Number(rest % 256n));
+					rest /= 256n;
+				}
+				while(rest >= 1n);
+				break;
+			default:
+				throw new Error('Invalid _endianness argument/configuration');
 		}
-		
-		if(_string)
-		{
-			return result;
-		}
-		
-		return Uint8Array.create(result);
+
+		return new Uint8Array(result);
 	};
 
-	radix.toBytes.Number = (_value, _string = _default.string, _throw = _default.throw) => {
-		var	rest = radix.zigzag.encode.Number(_value),
-			result;
+	radix.toBytes.Number = (_value, _endianness = _default.endianness, _throw = _default.throw) => {
+		const	result = [];
+		var	rest = radix.zigzag.encode.Number(_value);
 
 		if(rest === 0)
 		{
-			result = ALPHABET[0];
+			result = [ 0 ];
 		}
-		else
+		else switch(_endianness[0].toLowerCase())
 		{
-			result = '';
-			
-			do
-			{
-				result = (String.fromCharCode(
-					Math.trunc(rest % 256)) +
-						result);
-				rest /= 256;
-			}
-			while(rest >= 1);
+			case 'b':
+				do
+				{
+					result.unshift(Math.trunc(rest % 256));
+					
+					if(true)
+					{
+						rest = Math.trunc(rest / 256);
+					}
+					else
+					{
+						rest /= 256;
+					}
+				}
+				while(rest >= 1);
+				break;
+			case 'l':
+				do
+				{
+					result.push(Math.trunc(rest % 256));
+					
+					if(true)
+					{
+						rest = Math.trunc(rest / 256);
+					}
+					else
+					{
+						rest /= 256;
+					}
+				}
+				while(rest >= 1);
+				break;
+			default:
+				throw new Error('Invalid _endianness argument/configuration');
 		}
-		
-		if(_string)
-		{
-			return result;
-		}
-		
-		return Uint8Array.create(result);
+
+		return new Uint8Array(result);
 	};
 
 	Reflect.defineProperty(Number, 'fromBytes', {

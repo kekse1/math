@@ -11,8 +11,7 @@ export default DEFAULT;
 DEFAULT.throw = true;
 DEFAULT.radix = 10;
 DEFAULT.round = 0;
-DEFAULT.string = false;
-DEFAULT.endianness = 'l';
+DEFAULT.endianness = 'b';
 
 //
 

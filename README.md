@@ -15,6 +15,29 @@
 > or 1024 bytes. While this diverges from standard mathematical usage, it provides more expressiveness
 > by assigning distinct roles to terms that are usually treated as synonyms.
 
+<br><br>
+
+## Modules
+I'm keeping the different extensions in separate files. The base file [`math.mjs`](./src/math.mjs) will do
+all initialization stuff (including checks against multiple application). The [modules](./src/math/) keep
+their own `.initialize()` function, which gave me some advantages. Also a better handling of the
+[`default.mjs`](./src/default.mjs) with some basic configuration!
+
+* [`math.mjs`](./src/math.mjs)
+* [`default.mjs`](./src/default.mjs)
+
+* [`clock.mjs`](./src/math/clock.mjs)
+* [`code.mjs`](./src/math/code.mjs)
+* [`func.mjs`](./src/math/func.mjs)
+* [`helper.mjs`](./src/math/helper.mjs)
+* [`radix.mjs`](./src/math/radix.mjs)
+* [`random.mjs`](./src/math/random.mjs)
+* [`size.mjs`](./src/math/size.mjs)
+* [`time.mjs`](./src/math/time.mjs)
+
+Most of these modules are still (pure) **TODO**. I began this development with the
+[`radix.mjs`](./src/math/radis.mjs), beneath some other tiny things..
+
 <br><br><br>
 
 # Contact

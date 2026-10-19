@@ -17,21 +17,18 @@ const	number = new Array(COUNT),
 //
 for(var i = 0; i < COUNT; ++i)
 {
-	number[i] = Math.round(Math.random.
-		float(65535, -65536), ROUND);
-	bigInt[i] = BigInt(Math.trunc(
-				number[i]));
+	number[i] = Math.random.int(
+			65535, -65536);
+	bigInt[i] = BigInt(number[i]);
 }
 
 for(var i = 0; i < COUNT; ++i)
 {
 	result[i] = {
 		[number[i]]: Number.
-			toBytes(number[i],
-				false, false),
-		[bigInt[i]]: BigInt.
-			toBytes(bigInt[i],
-				false, false) };
+			toBytes(number[i]),
+		[bigInt[i] + 'n']: BigInt.
+			toBytes(bigInt[i]) };
 
 	strNum[i] = Number.fromBytes(
 		result[i][number[i]]);

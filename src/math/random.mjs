@@ -27,6 +27,19 @@ random.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			(_inclusive ? 1 : 0)) + _min) || 0);
 	};
 
+	//
+	//even more TODO....
+	//
+	random.color = Math.random.color = () => {
+throw new Error('todo');
+	};
+
+	random.color.rgb = () => {
+	};
+
+	random.color.argb = () => {
+	};
+
 	Reflect.defineProperty(Array.prototype, 'randomize', { value: function()
 	{
 		//

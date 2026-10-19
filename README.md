@@ -1,7 +1,7 @@
 <img src="without.svg" /><br>
 <img src="https://kekse.biz/github.php?draw&override=github:math" />
 
-# Some **`Math`** extensions (**JavaScript**)
+# **Mathematical** extensions (for JavaScript)
 **TODO**!
 
 <br><br>

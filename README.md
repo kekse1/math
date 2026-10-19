@@ -25,8 +25,8 @@ their own `.initialize()` function, which gave me some advantages. Also a better
 
 <br>
 
-* [**`math.mjs`**](./src/math.mjs)
-* [`default.mjs`](./src/default.mjs)
+* [**`main.mjs`**](./src/math/main.mjs)
+* [`default.mjs`](./src/math/default.mjs)
 
 <br>
 
@@ -41,7 +41,7 @@ their own `.initialize()` function, which gave me some advantages. Also a better
 * [`time.mjs`](./src/math/time.mjs)
 
 Most of these modules are still (pure) **TODO**. I began this development with the
-[`radix.mjs`](./src/math/radis.mjs), beneath some other tiny things..
+[`radix.mjs`](./src/math/radix.mjs), beneath some other tiny things..
 
 <br>
 

@@ -17,6 +17,9 @@ const	math = globalThis.math =	{
 export	default math;
 
 //
+import	'./math/global.mjs';
+
+//
 import	helper from './math/helper.mjs';
 	math.helper = helper;
 

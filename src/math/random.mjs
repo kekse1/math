@@ -26,6 +26,17 @@ random.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return ((Math.random() * (_max - _min +
 			(_inclusive ? 1 : 0)) + _min) || 0);
 	};
+
+	Reflect.defineProperty(Array.prototype, 'randomize', { value: function()
+	{
+		//
+	}});
+
+	Reflect.defineProperty(TypedArray.prototype, 'randomize', { value: function()
+	{
+		//
+	}});
+
 };
 
 //

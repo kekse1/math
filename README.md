@@ -23,6 +23,8 @@ all initialization stuff (including checks against multiple application). The [m
 their own `.initialize()` function, which gave me some advantages. Also a better handling of the
 [`default.mjs`](./src/default.mjs) with some basic configuration!
 
+<br>
+
 * [**`math.mjs`**](./src/math.mjs)
 * [`default.mjs`](./src/default.mjs)
 
@@ -31,6 +33,7 @@ their own `.initialize()` function, which gave me some advantages. Also a better
 * [`clock.mjs`](./src/math/clock.mjs)
 * [`code.mjs`](./src/math/code.mjs)
 * [`func.mjs`](./src/math/func.mjs)
+* [`global.mjs`](./src/math/global.mjs)
 * [`helper.mjs`](./src/math/helper.mjs)
 * [`radix.mjs`](./src/math/radix.mjs)
 * [`random.mjs`](./src/math/random.mjs)

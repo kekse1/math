@@ -10,7 +10,9 @@ export default helper;
 //
 helper.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	Reflect.defineProperty(globalThis, 'isDataArray', { value: (_item) => {
-		return (_item instanceof Uint8Array || _item instanceof Uint8ClampedArray);
+		return (_item instanceof TypedArray);
+		//return (_item instanceof Uint8Array ||
+		//	_item instanceof Uint8ClampedArray);
 	}});
 
 	Reflect.defineProperty(globalThis, 'isData', { value: (_item) => {

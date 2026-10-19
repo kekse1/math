@@ -12,8 +12,6 @@ import	DEFAULT from './default.mjs';
 const	math = globalThis.math =	{
 		SYMBOL:	Symbol.for(
 			'https://kekse.biz/'),
-		THROW:	DEFAULT.throw,
-		FUNC: {},
 		DEFAULT			};
 
 export	default math;

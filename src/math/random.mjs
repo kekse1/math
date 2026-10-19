@@ -30,8 +30,15 @@ random.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	//
 	//even more TODO....
 	//
-	random.color = Math.random.color = () => {
-throw new Error('todo');
+	random.color = Math.random.color = (_alpha = false) => {
+		const result = new Array(_alpha ? 4 : 3);
+
+		for(var i = 0; i < result.length; ++i)
+		{
+			result[i] = Math.random.int(255, 0);
+		}
+
+		return result;
 	};
 
 	random.color.rgb = () => {

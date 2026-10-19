@@ -23,8 +23,10 @@ all initialization stuff (including checks against multiple application). The [m
 their own `.initialize()` function, which gave me some advantages. Also a better handling of the
 [`default.mjs`](./src/default.mjs) with some basic configuration!
 
-* [`math.mjs`](./src/math.mjs)
+* [**`math.mjs`**](./src/math.mjs)
 * [`default.mjs`](./src/default.mjs)
+
+<br>
 
 * [`clock.mjs`](./src/math/clock.mjs)
 * [`code.mjs`](./src/math/code.mjs)
@@ -37,6 +39,10 @@ their own `.initialize()` function, which gave me some advantages. Also a better
 
 Most of these modules are still (pure) **TODO**. I began this development with the
 [`radix.mjs`](./src/math/radis.mjs), beneath some other tiny things..
+
+<br>
+
+See also the [**`test/`**](./test/)s.
 
 <br><br><br>
 

@@ -16,8 +16,8 @@ const
 	MAX_STRING_LENGTH = 128;
 
 //
-const radix = {};
-export default radix;
+const	radix = {};
+export	default radix;
 
 //
 radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {

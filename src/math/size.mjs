@@ -4,8 +4,8 @@
  */
 
 //
-const size = {};
-export default size;
+const	size = {};
+export	default size;
 
 //
 size.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {

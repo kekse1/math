@@ -4,8 +4,8 @@
  */
 
 //
-const time = {};
-export default time;
+const	time = {};
+export	default time;
 
 //
 time.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {

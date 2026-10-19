@@ -4,14 +4,15 @@
  */
 
 //
-const DEFAULT = {};
-export default DEFAULT;
+const	DEFAULT = {};
+export	default DEFAULT;
 
 //
 DEFAULT.throw = true;
 DEFAULT.radix = 10;
 DEFAULT.round = 0;
 DEFAULT.endianness = 'b';
+DEFAULT.crypto = false;
 
 //
 

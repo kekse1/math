@@ -4,8 +4,8 @@
  */
 
 //
-const func = {};
-export default func;
+const	func = {};
+export	default func;
 
 //
 func.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {

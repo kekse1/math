@@ -4,8 +4,8 @@
  */
 
 //
-const helper = {};
-export default helper;
+const	helper = {};
+export	default helper;
 
 //
 helper.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {

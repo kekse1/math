@@ -126,7 +126,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	radix.fromBytes = {
-		Number: (_bytes, _endianness = _default.endianness, _throw = _default.throw) => {
+		Number: (_bytes, _endianness = _default.endianness, _unsigned = _default.unsigned, _throw = _default.throw) => {
 			if((_bytes = checkBytes(_bytes, _throw)) === null)
 			{
 				return null;
@@ -155,9 +155,14 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 					throw new Error('Invalid _endianness argument/configuration');
 			}
 
+			if(_unsigned)
+			{
+				return result;
+			}
+			
 			return radix.zigzag.decode.Number(result);
 		},
-		BigInt: (_bytes, _endianness = _default.endianness, _throw = _default.throw) => {
+		BigInt: (_bytes, _endianness = _default.endianness, _unsigned = _default.unsigned, _throw = _default.throw) => {
 			if((_bytes = checkBytes(_bytes, _throw)) === null)
 			{
 				return null;
@@ -186,21 +191,28 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 					throw new Error('Invalid _endianness argument/configuration');
 			}
 
+			if(_unsigned)
+			{
+				return result;
+			}
+			
 			return radix.zigzag.decode.BigInt(result);
 		}
 	};
 	
-	radix.toBytes = (_value, _endianness = _default.endianness, _throw = _default.throw) => {
+	radix.toBytes = (_value, _endianness = _default.endianness, _unsigned = _default.unsigned, _throw = _default.throw) => {
 		if(typeof _value === 'bigint')
 		{
 			return radix.toBytes.BigInt(
-				_value, _endianness, _throw);
+				_value, _endianness,
+				_unsigned, _throw);
 		}
 		
 		if(Number.isFinite(_value))
 		{
 			return radix.toBytes.Number(
-				_value, _endianness, _throw);
+				_value, _endianness,
+				_unsigned, _throw);
 		}
 		
 		if(_throw)
@@ -211,9 +223,18 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return null;
 	};
 	
-	radix.toBytes.BigInt = (_value, _endianness = _default.endianness, _throw = _default.throw) => {
+	radix.toBytes.BigInt = (_value, _endianness = _default.endianness, _unsigned = _default.unsigned, _throw = _default.throw) => {
 		const	result = [];
-		var	rest = radix.zigzag.encode.BigInt(_value);
+		var	rest = _value;
+		
+		if(!_unsigned)
+		{
+			rest = radix.zigzag.encode.BigInt(rest);
+		}
+		else if(rest < 0n)
+		{
+			throw new Error('You enabled _unsigned, but your value is below zero.');
+		}
 
 		if(rest === 0n)
 		{
@@ -244,9 +265,18 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return new Uint8Array(result);
 	};
 
-	radix.toBytes.Number = (_value, _endianness = _default.endianness, _throw = _default.throw) => {
+	radix.toBytes.Number = (_value, _endianness = _default.endianness, _unsigned = _default.unsigned, _throw = _default.throw) => {
 		const	result = [];
-		var	rest = radix.zigzag.encode.Number(_value);
+		var	rest = _value;
+		
+		if(!_unsigned)
+		{
+			rest = radix.zigzag.encode.Number(rest);
+		}
+		else if(rest < 0)
+		{
+			throw new Error('You enabled _unsigned, but your value is below zero.');
+		}
 
 		if(rest === 0)
 		{
@@ -314,10 +344,10 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	//
 	radix.parse = {
 		'Number': () => {
-		
+			throw new Error('todo');
 		},
 		'BigInt': () => {
-		
+			throw new Error('todo');
 		}
 	};
 	

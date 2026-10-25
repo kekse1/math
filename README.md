@@ -40,8 +40,7 @@ their own `.initialize()` function, which gave me some advantages. Also a better
 * [`size.mjs`](./src/math/size.mjs)
 * [`time.mjs`](./src/math/time.mjs)
 
-Most of these modules are still (pure) **TODO**. I began this development with the
-[`radix.mjs`](./src/math/radix.mjs), beneath some other tiny things..
+Most of these modules are still (pure) **TODO**.
 
 <br>
 

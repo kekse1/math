@@ -34,7 +34,10 @@ import	helper from './helper.mjs';
 
 import	func from './func.mjs';
 	math.func = func;
-	
+
+import	timeout from './timeout.mjs';
+	math.timeout = timeout;
+
 import	random from './random.mjs';
 	math.random = random;
 
@@ -49,6 +52,9 @@ import	time from './time.mjs';
 
 import	clock from './clock.mjs';
 	math.clock = math.time.clock = clock;
+
+import	date from './date.mjs';
+	math.date = date;
 
 import	code from './code.mjs';
 	math.code = code;

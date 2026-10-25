@@ -32,6 +32,7 @@ their own `.initialize()` function, which gave me some advantages. Also a better
 
 * [`clock.mjs`](./src/math/clock.mjs)
 * [`code.mjs`](./src/math/code.mjs)
+* [`date.mjs`](./src/math/date.mjs)
 * [`func.mjs`](./src/math/func.mjs)
 * [`global.mjs`](./src/math/global.mjs)
 * [`helper.mjs`](./src/math/helper.mjs)
@@ -39,6 +40,7 @@ their own `.initialize()` function, which gave me some advantages. Also a better
 * [`random.mjs`](./src/math/random.mjs)
 * [`size.mjs`](./src/math/size.mjs)
 * [`time.mjs`](./src/math/time.mjs)
+* [`timeout.mjs`](./src/math/timeout.mjs)
 
 Most of these modules are still (pure) **TODO**.
 

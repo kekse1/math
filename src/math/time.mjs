@@ -10,6 +10,9 @@ export	default time;
 //
 time.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	//
+	Math.time = {};
+	
+	//
 };
 
 //

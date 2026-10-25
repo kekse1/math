@@ -446,6 +446,16 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	radix.sign = (_string) => {
+		if(typeof _string !== 'string')
+		{
+			return null;
+		}
+
+		if(_string.length === 0)
+		{
+			return '';
+		}
+
 		var	negative = false,
 			count = 0;
 		

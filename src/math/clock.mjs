@@ -270,7 +270,7 @@ clock.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 
 		var result;
 
-		if(strings[0])
+		if(strings[0] && _math.time.parse)
 		{
 			if((result = _math.time.parse(strings[0])) === null)
 			{

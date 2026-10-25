@@ -10,7 +10,7 @@ export	default clock;
 //
 clock.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	//
-	_math.clock = Math.time.clock = (_data, _date) => {
+	_math.clock = Math.clock = Math.time.clock = (_data, _date) => {
 		if(typeof _data !== 'string')
 		{
 			return null;
@@ -234,7 +234,7 @@ clock.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return checkMeridiem(result);
 	};
 
-	_math.clock.parse = Math.time.clock.parse = (_data, _date) => {
+	_math.clock.parse = (_data, _date) => {
 		if(typeof _data !== 'string')
 		{
 			if(typeof _data === 'number')
@@ -309,7 +309,7 @@ clock.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return result;
 	};
 
-	_math.clock.getCurrent = Math.time.clock.getCurrent = (_unit, _date) => {
+	_math.clock.getCurrent = (_unit, _date) => {
 		if(!_date)
 		{
 			_date = new Date();
@@ -335,7 +335,7 @@ clock.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return result;
 	};
 
-	_math.clock.isToday = Math.time.clock.isToday = (_clock, _date) => {
+	_math.clock.isToday = (_clock, _date) => {
 		if(!_date)
 		{
 			_date = new Date();
@@ -360,8 +360,8 @@ clock.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return true;
 	};
 
-	_math.clock.isTomorrow = Math.time.clock.isTomorrow =
-		(... _args) => !_math.clock.isToday(... _args);
+	_math.clock.isTomorrow = (... _args) => !_math.
+			clock.isToday(... _args);
 
 	//
 	const __intLimit = [ 24, 60, 60, 1000 ];

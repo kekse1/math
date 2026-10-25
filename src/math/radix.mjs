@@ -135,7 +135,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			var	result = 0,
 				mul = 1;
 			
-			switch(_endianness[0].toLowerCase())
+			if(_endianness) switch(_endianness[0].toLowerCase())
 			{
 				case 'b':
 					for(var i = _bytes.length - 1; i >= 0; --i)
@@ -154,7 +154,11 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				default:
 					throw new Error('Invalid _endianness argument/configuration');
 			}
-
+			else
+			{
+				throw new Error('Invalid _endianness');
+			}
+			
 			if(_unsigned)
 			{
 				return result;
@@ -171,7 +175,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			var	result = 0n,
 				mul = 1n;
 			
-			switch(_endianness[0].toLowerCase())
+			if(_endianness) switch(_endianness[0].toLowerCase())
 			{
 				case 'b':
 					for(var i = _bytes.length - 1; i >= 0; --i)
@@ -189,6 +193,10 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 					break;
 				default:
 					throw new Error('Invalid _endianness argument/configuration');
+			}
+			else
+			{
+				throw new Error('Invalid _endianness');
 			}
 
 			if(_unsigned)
@@ -240,7 +248,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		{
 			result = [ 0 ];
 		}
-		else switch(_endianness[0].toLowerCase())
+		else if(_endianness) switch(_endianness[0].toLowerCase())
 		{
 			case 'b':
 				do
@@ -260,6 +268,10 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				break;
 			default:
 				throw new Error('Invalid _endianness argument/configuration');
+		}
+		else
+		{
+			throw new Error('Invalid _endianness');
 		}
 
 		return new Uint8Array(result);
@@ -282,42 +294,30 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		{
 			result = [ 0 ];
 		}
-		else switch(_endianness[0].toLowerCase())
+		else if(_endianness) switch(_endianness[0].toLowerCase())
 		{
 			case 'b':
 				do
 				{
-					result.unshift(Math.trunc(rest % 256));
-					
-					if(true)
-					{
-						rest = Math.trunc(rest / 256);
-					}
-					else
-					{
-						rest /= 256;
-					}
+					result.unshift(rest % 256);
+					rest = Math.trunc(rest / 256);
 				}
 				while(rest >= 1);
 				break;
 			case 'l':
 				do
 				{
-					result.push(Math.trunc(rest % 256));
-					
-					if(true)
-					{
-						rest = Math.trunc(rest / 256);
-					}
-					else
-					{
-						rest /= 256;
-					}
+					result.push(rest % 256);
+					rest = Math.trunc(rest / 256);
 				}
 				while(rest >= 1);
 				break;
 			default:
 				throw new Error('Invalid _endianness argument/configuration');
+		}
+		else
+		{
+			throw new Error('Invalid _endianness');
 		}
 
 		return new Uint8Array(result);
@@ -339,25 +339,286 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			BigInt(this.valueOf(), ... _args); }});
 
 	//
-	//TODO/see (NEW) LOOK-UP-TABLE!!1 ;-D
-	//TODO/don't forget ZIGZAG - MAYBE?! ...
-	//
 	radix.parse = {
-		'Number': () => {
-			throw new Error('todo');
+		'Number': (_string, _radix = _default.radix, _integer = false, _endianness = _default.endianness, _throw = _default.throw) => {
+			const	prepared = prepareConversion(
+					_string, _radix);
+			
+			if(!prepared)
+			{
+				if(_throw)
+				{
+					throw new Error('Invalid argument(s)');
+				}
+				
+				return null;
+			}
+			
+			var	[ a, b, negative, rdx ] = prepared,
+				result = 0,
+				mul = 1,
+				index;
+			
+			if(_integer)
+			{
+				b = '';
+			}
+			
+			if(_endianness) switch(_endianness[0].toLowerCase())
+			{
+				case 'b':
+					for(var i = a.length - 1; i >= 0; --i)
+					{
+						index = LOOKUP[a.charCodeAt(i)];
+						
+						if((index + 1) > rdx)
+						{
+							if(_throw)
+							{
+								throw new Error('Invalid character[' + i + ']');
+							}
+							
+							return null;
+						}
+						
+						result += (index * mul);
+						mul *= rdx;
+					}
+					break;
+				case 'l':
+					for(var i = 0; i < a.length; ++i)
+					{
+						index = LOOKUP[a.charCodeAt(i)];
+						
+						if((index + 1) > rdx)
+						{
+							if(_throw)
+							{
+								throw new Error('Invalid character[' + i + ']');
+							}
+							
+							return null;
+						}
+						
+						result += (index * mul);
+						mul *= rdx;
+					}
+					break;
+				default:
+					throw new Error('Invalid _endianness argument/configuration');
+			}
+			else
+			{
+				throw new Error('Invalid _endianness');
+			}
+			
+			if(b)
+			{
+				//
+				throw new Error('todo');
+			}
+			
+			if(negative)
+			{
+				result = (-result || 0);
+			}
+			
+			return result;	
 		},
-		'BigInt': () => {
-			throw new Error('todo');
+		'BigInt': (_string, _radix = _default.radix, _integer = false, _throw = _default.throw) => {
+			const	prepared = prepareConversion(
+					_string, _radix);
+			
+			if(!prepared)
+			{
+				if(_throw)
+				{
+					throw new Error('Invalid argument(s)');
+				}
+				
+				return null;
+			}
+			
+			var	[ a, b, negative, rdx ] = prepared,
+				result = 0n,
+				mul = 1n,
+				index;
+			
+			rdx = BigInt(rdx);
+			
+			if(_endianness) switch(_endianness[0].toLowerCase())
+			{
+				case 'b':
+					for(var i = a.length - 1; i >= 0; --i)
+					{
+						index = LOOKUP[a.charCodeAt(i)];
+						
+						if((index + 1) > rdx)
+						{
+							if(_throw)
+							{
+								throw new Error('Invalid character[' + i + ']');
+							}
+							
+							return null;
+						}
+						
+						result += (BigInt(index) * mul);
+						mul *= rdx;
+					}
+					break;
+				case 'l':
+					for(var i = 0; i < a.length; ++i)
+					{
+						index = LOOKUP[a.charCodeAt(i)];
+						
+						if((index + 1) > rdx)
+						{
+							if(_throw)
+							{
+								throw new Error('Invalid character[' + i + ']');
+							}
+							
+							return null;
+						}
+						
+						result += (BigInt(index) * mul);
+						mul *= rdx;
+					}
+					break;
+				default:
+					throw new Error('Invalid _endianness argument/configuration');
+			}
+			else
+			{
+				throw new Error('Invalid _endianness');
+			}
+			
+			if(negative)
+			{
+				result = (-result || 0);
+			}
+			
+			return result;
 		}
 	};
 	
-	radix.render = {
-		'Number': () => {
-		
-		},
-		'BigInt': () => {
-		
+	radix.render = (_value, _radix = _default.radix, _integer = false, _endianness = _default.endianness, _throw = _default.throw) => {
+		if(typeof _value === 'number')
+		{
+			return radix.render.Number(_value, _radix, _integer, _endianness, _throw);
 		}
+		
+		if(typeof _value === 'bigint')
+		{
+			return radix.render.BigInt(_value, _radix, _endianness, _throw);
+		}
+		
+		if(_throw)
+		{
+			throw new Error('Invalid _value argument');
+		}
+		
+		return null;
+	};
+	
+	radix.render.Number = (_value, _radix = _default.radix, _integer = false, _endianness = _default.endianness, _throw = _default.throw) => {
+		//
+		//TODO/
+		//...
+		//
+throw new Error('todo');
+		
+		if(_endianness) switch(_endianness[0].toLowerCase())
+		{
+			case 'b':
+				break;
+			case 'l':
+				break;
+			default:
+				throw new Error('Invalid _endianness argument/configuration');
+		}
+		else
+		{
+			throw new Error('Invalid _endianness');
+		}
+	};
+	
+	radix.render.BigInt = (_value, _radix = _default.radix, _endianness = _default.endianness, _throw = _default.throw) => {
+		//
+		//TODO/...
+		//..
+		//
+throw new Error('todo');
+		
+		if(_endianness) switch(_endianness[0].toLowerCase())
+		{
+			case 'b':
+				break;
+			case 'l':
+				break;
+			default:
+				throw new Error('Invalid _endianness argument/configuration');
+		}
+		else
+		{
+			throw new Error('Invalid _endianness');
+		}
+	};
+	
+	//
+	radix.isNumeric = (_string, _radix = _default.radix) => {
+		if(typeof _string === 'number')
+		{
+			return Number.isFinite(_string);
+		}
+		else if(typeof _string === 'bigint')
+		{
+			return true;
+		}
+		else if(typeof _string !== 'string')
+		{
+			return null;
+		}
+		
+		if(_string.length === 0)
+		{
+			return true;
+		}
+		
+		const	prepared = prepareConversion(
+				_string, _radix);
+			
+		if(!prepared)
+		{
+			return false;
+		}
+		
+		const	[ a, b, negative, rdx ] = prepared;
+		var	index;
+		
+		//
+		for(var i = 0; i < a.length; ++i)
+		{
+			index = LOOKUP[a.charCodeAt(i)];
+			
+			if((index + 1) > rdx)
+			{
+				return false;
+			}
+		}
+		
+		for(var i = 0; i < b.length; ++i)
+		{
+			index = LOOKUP[b.charCodeAt(i)];
+			
+			if((index + 1) > rdx)
+			{
+				return false;
+			}
+		}
+		
+		return true;
 	};
 
 	Reflect.defineProperty(Number, 'parse', {
@@ -526,60 +787,6 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		}
 
 		return [ _string.substr(idx + 1), result ];
-	};
-
-	radix.isNumeric = (_string, _radix = _default.radix) => {
-		if(typeof _string === 'number')
-		{
-			return Number.isFinite(_string);
-		}
-		else if(typeof _string === 'bigint')
-		{
-			return true;
-		}
-		else if(typeof _string !== 'string')
-		{
-			return null;
-		}
-		
-		if(_string.length === 0)
-		{
-			return true;
-		}
-		
-		const	prepared = prepareConversion(
-				_string, _radix);
-			
-		if(!prepared)
-		{
-			return false;
-		}
-		
-		const	[ a, b, negative, rdx ] = prepared;
-		var	index;
-		
-		//
-		for(var i = 0; i < a.length; ++i)
-		{
-			index = LOOKUP[a.charCodeAt(i)];
-			
-			if((index + 1) > rdx)
-			{
-				return false;
-			}
-		}
-		
-		for(var i = 0; i < b.length; ++i)
-		{
-			index = LOOKUP[b.charCodeAt(i)];
-			
-			if((index + 1) > rdx)
-			{
-				return false;
-			}
-		}
-		
-		return true;
 	};
 
 	const prepareConversion = (_string, _radix = _default.radix) => {

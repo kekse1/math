@@ -82,52 +82,48 @@ random.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 
 	//
-	// all the following are w/ 'Knuth-Shuffle'- bzw. 'Fisher-Yates-Shuffle'-algo!
+	// 'Knuth-Shuffle'- bzw. 'Fisher-Yates-Shuffle'-algo!
 	//	.. a great thing. :-) ...
 	//
+	random.randomize = (_array, _crypto = _default.crypto) => {
+		var	a, b;
+		
+		for(var i = _array.length - 1; i > 0; --i)
+		{
+			a = random.int(i, 0, true, _crypto);
+			b = _array[i];
+			_array[i] = _array[a];
+			_array[a] = b;
+		}
+		
+		return _array;
+	};
+	
 	Reflect.defineProperty(String.prototype, 'randomize', { value: function(_crypto = _default.crypto)
 	{
-		return this.split('').randomize(_crypto).join('');
+		return random.randomize(this.split(''), _crypto).join('');
 	}});
 	
 	Reflect.defineProperty(Array.prototype, 'randomize', { value: function(_crypto = _default.crypto)
 	{
-		var	a, b;
-		
-		for(var i = this.length - 1; i > 0; --i)
-		{
-			a = Math.random.int(i, 0, true, _crypto);
-			b = this[i];
-			this[i] = this[a];
-			this[a] = b;
-		}
-		
-		return this;
+		return random.randomize(this, _crypto);
 	}});
 
 	Reflect.defineProperty(TypedArray.prototype, 'randomize', { value: function(_crypto = _default.crypto)
 	{
-		var	a, b;
-		
-		for(var i = this.length - 1; i > 0; --i)
-		{
-			a = Math.random.int(i, 0, true, _crypto);
-			b = this[i];
-			this[i] = this[a];
-			this[a] = b;
-		}
-		
-		return this;
+		return random.randomize(this, _crypto);
 	}});
 	
 	Reflect.defineProperty(Array.prototype, 'toRandomized', { value: function(_crypto = _default.crypto)
 	{
-		return this.slice().randomize(_crypto);
+		return random.randomize(this.slice(), _crypto);
 	}});
 	
 	Reflect.defineProperty(TypedArray.prototype, 'toRandomized', { value: function(_crypto = _default.crypto)
 	{
-		return new this.constructor(this).randomize(_crypto);
+		return random.randomize(
+			new this.constructor(this),
+			_crypto);
 	}});
 
 	//
@@ -135,4 +131,3 @@ random.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 };
 
 //
-

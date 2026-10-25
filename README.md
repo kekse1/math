@@ -42,9 +42,9 @@ their own `.initialize()` function, which gave me some advantages. Also a better
 * [`time.mjs`](./src/math/time.mjs)
 * [`timeout.mjs`](./src/math/timeout.mjs)
 
-Most of these modules are still (pure) **TODO**.
-
 <br>
+
+Most of these modules are still (pure) **TODO**.
 
 See also the [**`test/`**](./test/)s.
 

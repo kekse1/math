@@ -11,6 +11,7 @@ export	default DEFAULT;
 DEFAULT.throw = true;
 DEFAULT.radix = 10;
 DEFAULT.round = 0;
+DEFAULT.float = true;
 DEFAULT.unsigned = false;
 DEFAULT.endianness = 'b';
 DEFAULT.crypto = false;

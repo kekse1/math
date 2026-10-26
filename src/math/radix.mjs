@@ -341,8 +341,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	//
 	radix.parse = {
 		'Number': (_string, _radix = _default.radix, _integer = false, _endianness = _default.endianness, _throw = _default.throw) => {
-			const	prepared = prepareConversion(
-					_string, _radix);
+			const	prepared = prepareConversion(_string, _radix);
 			
 			if(!prepared)
 			{
@@ -354,16 +353,11 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				return null;
 			}
 			
-			var	[ a, b, negative, rdx ] = prepared,
-				result = 0,
+			const	[ a, b, negative, rdx ] = prepared;
+			var	result = 0,
 				mul = 1,
 				index;
-			
-			if(_integer)
-			{
-				b = '';
-			}
-			
+
 			if(_endianness) switch(_endianness[0].toLowerCase())
 			{
 				case 'b':
@@ -426,8 +420,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			return result;	
 		},
 		'BigInt': (_string, _radix = _default.radix, _integer = false, _throw = _default.throw) => {
-			const	prepared = prepareConversion(
-					_string, _radix);
+			const	prepared = prepareConversion(_string, _radix);
 			
 			if(!prepared)
 			{
@@ -439,13 +432,12 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				return null;
 			}
 			
-			var	[ a, b, negative, rdx ] = prepared,
-				result = 0n,
+			const	[ a, b, negative, rdx ] = prepared,
+				big = BigInt(rdx);
+			var	result = 0n,
 				mul = 1n,
 				index;
-			
-			rdx = BigInt(rdx);
-			
+
 			if(_endianness) switch(_endianness[0].toLowerCase())
 			{
 				case 'b':
@@ -464,7 +456,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 						}
 						
 						result += (BigInt(index) * mul);
-						mul *= rdx;
+						mul *= big;
 					}
 					break;
 				case 'l':
@@ -483,7 +475,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 						}
 						
 						result += (BigInt(index) * mul);
-						mul *= rdx;
+						mul *= big;
 					}
 					break;
 				default:
@@ -523,17 +515,50 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	radix.render.Number = (_value, _radix = _default.radix, _integer = false, _endianness = _default.endianness, _throw = _default.throw) => {
-		//
-		//TODO/
-		//...
-		//
-throw new Error('todo');
+		const	prepared = prepareConversion(_string, _radix);
 		
+		if(!prepared)
+		{
+			if(_throw)
+			{
+				throw new Error('Invalid argument(s)');
+			}
+			
+			return null;
+		}
+		
+		const	[ a, b, negative, rdx ] = prepared;
+		var	rest = _value;
+
 		if(_endianness) switch(_endianness[0].toLowerCase())
 		{
 			case 'b':
+				for(var i = a.length - 1; i >= 0; --i)
+				{
+					//
+				}
+				
+				if(b)
+				{
+					for(var i = 0; i < b.length; ++i)
+					{
+						//
+					}
+				}
 				break;
 			case 'l':
+				for(var i = 0; i < a.length; ++i)
+				{
+					//
+				}
+				
+				if(b)
+				{
+					for(var i = b.length - 1; i >= 0; --i)
+					{
+						//
+					}
+				}
 				break;
 			default:
 				throw new Error('Invalid _endianness argument/configuration');
@@ -545,17 +570,35 @@ throw new Error('todo');
 	};
 	
 	radix.render.BigInt = (_value, _radix = _default.radix, _endianness = _default.endianness, _throw = _default.throw) => {
-		//
-		//TODO/...
-		//..
-		//
-throw new Error('todo');
+		const	prepared = prepareConversion(_string, _radix);
+		
+		if(!prepared)
+		{
+			if(_throw)
+			{
+				throw new Error('Invalid argument(s)');
+			}
+			
+			return null;
+		}
+		
+		const	[ a, b, negative, rdx ] = prepared,
+			big = BigInt(rdx);
+		var	rest = _value;
 		
 		if(_endianness) switch(_endianness[0].toLowerCase())
 		{
 			case 'b':
+				for(var i = a.length - 1; i >= 0; --i)
+				{
+					//
+				}
 				break;
 			case 'l':
+				for(var i = 0; i < a.length; ++i)
+				{
+					//
+				}
 				break;
 			default:
 				throw new Error('Invalid _endianness argument/configuration');
@@ -586,8 +629,7 @@ throw new Error('todo');
 			return true;
 		}
 		
-		const	prepared = prepareConversion(
-				_string, _radix);
+		const	prepared = prepareConversion(_string, _radix);
 			
 		if(!prepared)
 		{
@@ -596,8 +638,7 @@ throw new Error('todo');
 		
 		const	[ a, b, negative, rdx ] = prepared;
 		var	index;
-		
-		//
+
 		for(var i = 0; i < a.length; ++i)
 		{
 			index = LOOKUP[a.charCodeAt(i)];
@@ -869,48 +910,6 @@ throw new Error('todo');
 	Reflect.defineProperty(Number, 'sign', { value: radix.sign });
 	Reflect.defineProperty(Number, 'cast', { value: radix.cast });
 
-	//
-	radix.findRadix = (_string) => {
-		const	prepared = prepareConversion(
-				_string, null);
-		
-		if(!prepared)
-		{
-			return null;
-		}
-		
-		const	[ a, b ] = prepared;
-		var	max = 0,
-			index;
-		
-		for(var i = 0; i < a.length; ++i)
-		{
-			index = radix.LOOKUP.full[a.charCodeAt(i)];
-			
-			if(index > max)
-			{
-				max = index;
-			}
-		}
-		
-		for(var i = 0; i < b.length; ++i)
-		{
-			index = radix.LOOKUP.full[b.charCodeAt(i)];
-			
-			if(index > max)
-			{
-				max = index;
-			}
-		}
-		
-		if(max > radix.MAX)
-		{
-			return null;
-		}
-		
-		return max;
-	};
-	
 	//
 
 };

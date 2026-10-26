@@ -340,7 +340,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 
 	//
 	radix.parse = {
-		'Number': (_string, _radix = _default.radix, _integer = false, _endianness = _default.endianness, _throw = _default.throw) => {
+		'Number': (_string, _radix = _default.radix, _float = true, _endianness = _default.endianness, _throw = _default.throw) => {
 			const	prepared = prepareConversion(_string, _radix);
 			
 			if(!prepared)
@@ -378,6 +378,11 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 						result += (index * mul);
 						mul *= rdx;
 					}
+
+					if(b && _float)
+					{
+						throw new Error('todo');
+					}
 					break;
 				case 'l':
 					for(var i = 0; i < a.length; ++i)
@@ -396,6 +401,11 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 						
 						result += (index * mul);
 						mul *= rdx;
+					}
+
+					if(b && _float)
+					{
+						throw new Error('todo');
 					}
 					break;
 				default:
@@ -419,7 +429,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			
 			return result;	
 		},
-		'BigInt': (_string, _radix = _default.radix, _integer = false, _throw = _default.throw) => {
+		'BigInt': (_string, _radix = _default.radix, _throw = _default.throw) => {
 			const	prepared = prepareConversion(_string, _radix);
 			
 			if(!prepared)
@@ -495,10 +505,10 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		}
 	};
 	
-	radix.render = (_value, _radix = _default.radix, _integer = false, _endianness = _default.endianness, _throw = _default.throw) => {
+	radix.render = (_value, _radix = _default.radix, _float = true, _endianness = _default.endianness, _throw = _default.throw) => {
 		if(typeof _value === 'number')
 		{
-			return radix.render.Number(_value, _radix, _integer, _endianness, _throw);
+			return radix.render.Number(_value, _radix, _float, _endianness, _throw);
 		}
 		
 		if(typeof _value === 'bigint')
@@ -514,7 +524,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return null;
 	};
 	
-	radix.render.Number = (_value, _radix = _default.radix, _integer = false, _endianness = _default.endianness, _throw = _default.throw) => {
+	radix.render.Number = (_value, _radix = _default.radix, _float = true, _endianness = _default.endianness, _throw = _default.throw) => {
 		const	negative = (_value < 0);
 		var	rest = _value,
 			result = '',
@@ -536,7 +546,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				}
 				while(rest >= 1);
 				
-				if(rest > 0 && !_integer)
+				if(rest > 0 && _float)
 				{
 					throw new Error('todo');
 				}

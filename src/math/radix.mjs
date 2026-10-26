@@ -515,50 +515,40 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	radix.render.Number = (_value, _radix = _default.radix, _integer = false, _endianness = _default.endianness, _throw = _default.throw) => {
-		const	prepared = prepareConversion(_string, _radix);
+		const	negative = (_value < 0);
+		var	rest = _value,
+			result = '',
+			index;
 		
-		if(!prepared)
+		if(negative)
 		{
-			if(_throw)
-			{
-				throw new Error('Invalid argument(s)');
-			}
-			
-			return null;
+			rest = (-rest || 0);
 		}
-		
-		const	[ a, b, negative, rdx ] = prepared;
-		var	rest = _value;
 
 		if(_endianness) switch(_endianness[0].toLowerCase())
 		{
 			case 'b':
-				for(var i = a.length - 1; i >= 0; --i)
+				do
 				{
-					//
+					index = (rest % _radix);
+					result = (ALPHABET[index] + result);
+					rest = Math.trunc(rest / _radix);
 				}
+				while(rest >= 1);
 				
-				if(b)
+				if(rest > 0 && !_integer)
 				{
-					for(var i = 0; i < b.length; ++i)
-					{
-						//
-					}
+					throw new Error('todo');
 				}
 				break;
 			case 'l':
-				for(var i = 0; i < a.length; ++i)
+				do
 				{
-					//
+					index = (rest % _radix);
+					result += ALPHABET[index];
+					rest = Math.trunc(rest / _radix);
 				}
-				
-				if(b)
-				{
-					for(var i = b.length - 1; i >= 0; --i)
-					{
-						//
-					}
-				}
+				while(rest >= 1);
 				break;
 			default:
 				throw new Error('Invalid _endianness argument/configuration');
@@ -567,38 +557,46 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		{
 			throw new Error('Invalid _endianness');
 		}
+		
+		if(negative)
+		{
+			result = ('-' + result);
+		}
+		
+		return result;
 	};
 	
 	radix.render.BigInt = (_value, _radix = _default.radix, _endianness = _default.endianness, _throw = _default.throw) => {
-		const	prepared = prepareConversion(_string, _radix);
+		const	negative = (_value < 0n),
+			rdx = BigInt(_radix);
+		var	rest = _value,
+			result = '',
+			index;
 		
-		if(!prepared)
+		if(negative)
 		{
-			if(_throw)
-			{
-				throw new Error('Invalid argument(s)');
-			}
-			
-			return null;
+			rest = (-rest || 0n);
 		}
-		
-		const	[ a, b, negative, rdx ] = prepared,
-			big = BigInt(rdx);
-		var	rest = _value;
 		
 		if(_endianness) switch(_endianness[0].toLowerCase())
 		{
 			case 'b':
-				for(var i = a.length - 1; i >= 0; --i)
+				do
 				{
-					//
+					index = Number(rest % rdx);
+					result = (ALPHABET[index] + result);
+					rest /= rdx;
 				}
+				while(rest >= 1n);
 				break;
 			case 'l':
-				for(var i = 0; i < a.length; ++i)
+				do
 				{
-					//
+					index = Number(rest % rdx);
+					result += ALPHABET[index];
+					rest /= rdx;
 				}
+				while(rest >= 1n);
 				break;
 			default:
 				throw new Error('Invalid _endianness argument/configuration');
@@ -607,6 +605,13 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		{
 			throw new Error('Invalid _endianness');
 		}
+		
+		if(negative)
+		{
+			result = ('-' + result);
+		}
+		
+		return result;
 	};
 	
 	//

@@ -37,22 +37,22 @@ for(var i = 0; i < COUNT; ++i)
 
 var t, f; for(var i = 0; i < COUNT; ++i)
 {
-	rendered['(' + integer[i] + '(int) @ ' + radix[i] + ')'] =
-		t = integer[i].render(radix[i]);
-	rendered['(' + float[i] + '(float) @ ' + radix[i] + ')'] =
-		f = float[i].render(radix[i]);
+	rendered[integer[i] + '  // int (' + radix[i] + ')'] =
+			t = integer[i].render(radix[i]);
+	rendered[float[i] + '  // float (' + radix[i] + ')'] =
+			f = float[i].render(radix[i]);
 
-	parsed['`' + t + '`(int) @ ' + radix[i]] =
-		Number.parse(t, radix[i]);
-	parsed['`' + f + '`(float) @ ' + radix[i]] =
-		Number.parse(f, radix[i]);
+	parsed[t + '  // int (' + radix[i] + ')'] =
+			Number.parse(t, radix[i]);
+	parsed[f + '  // float (' + radix[i] + ')'] =
+			Number.parse(f, radix[i]);
 
 	if(Number.isHalfRadix(radix[i]))
 	{
-		vanillaRendered['(' + float[i] + '(float) @ ' + radix[i] + ')'] =
-					float[i].toString(radix[i]);
-		vanillaParsed['`' + t + '` @ ' + radix[i]] = Number.
-					parseInt(integer[i], radix[i]);
+		vanillaRendered[float[i] + '  // float (' +
+			radix[i] + ')'] = float[i].toString(radix[i]);
+		vanillaParsed[t + '  // int (' + radix[i] + ')'] =
+			Number.parseInt(integer[i], radix[i]);
 	}
 }
 

@@ -9,11 +9,15 @@
 
 		# und guck', inwieweit auch *parallel* die ganzen objekte mit essenz...?
 
-	@ radix: noch eine 'String[..].round()'-version!?!
+	@ radix
 
-		# ... direkt im string, statt mathematisch. ...
+		# noch eine 'String[..].round()'-version!?!
+
+			# ... direkt im string, statt mathematisch. ...
 
 		# EPSILON noch @ render....
 
 			# wg. rundungsfehler, bzw. 00000 oder 9999 ....
+
+		# evtl "alphabet" ALS RADIX.. (customized ;-)
 

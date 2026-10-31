@@ -501,6 +501,26 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	radix.render.Number = (_value, _radix = _default.radix, _float = _default.float, _throw = _default.throw) => {
+		if(!Number.isFinite(_value))
+		{
+			if(_throw)
+			{
+				throw new Error('Invalid _value');
+			}
+
+			return null;
+		}
+
+		if(!radix.isRadix(_radix))
+		{
+			if(_throw)
+			{
+				throw new Error('Invalid _radix');
+			}
+
+			return null;
+		}
+
 		const	negative = (_value < 0);
 		var	rest = _value,
 			result = '',
@@ -569,6 +589,26 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	radix.render.BigInt = (_value, _radix = _default.radix, _throw = _default.throw) => {
+		if(typeof _value !== 'bigint')
+		{
+			if(_throw)
+			{
+				throw new Error('Invalid _value');
+			}
+
+			return null;
+		}
+
+		if(!radix.isRadix(_radix))
+		{
+			if(_throw)
+			{
+				throw new Error('Invalid _radix');
+			}
+
+			return null;
+		}
+
 		const	negative = (_value < 0n),
 			rdx = BigInt(_radix);
 		var	rest = _value,
@@ -831,7 +871,8 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		
 		if(!radix.isRadix(result))
 		{
-			return [ _string, _fallback || null ];
+			return [ _string, null ];
+			//return [ _string, _fallback || null ];
 		}
 
 		return [ _string.substr(idx + 1), result ];
@@ -861,6 +902,11 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 
 		[ _string, _radix ] = radix.cast(
 			_string, _radix);
+
+		if(_radix === null)
+		{
+			return null;
+		}
 
 		if((a = radix.sign(a))[0] === '-')
 		{

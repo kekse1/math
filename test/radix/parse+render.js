@@ -9,11 +9,12 @@ import	math from '../../src/math.mjs';
 //
 
 //
+const	DEC = false;
 const	COUNT = 10,
 	MAX = ((2**32)-1),
 	MIN = -MAX,
 	ROUND = 14,
-	RDX = 16;
+	RDX = Number.RADIX_MAX; // (62), btw.
 
 //
 const	integer = new Array(COUNT),
@@ -26,13 +27,12 @@ const	integer = new Array(COUNT),
 
 for(var i = 0; i < COUNT; ++i)
 {
-	//radix[i] = Math.random.radix(16);
-	radix[i] = 10;
+	if(DEC)	radix[i] = 10;
+	else	radix[i] = Math.random.radix(RDX);
 	integer[i] = Math.random.int(MAX, MIN);
 	float[i] = Math.random.float(MAX, MIN);
 	float[i] = Math.round(float[i], Math.
-			random.int(ROUND,
-				0, true));
+		random.int(ROUND, 0, true));
 }
 
 var t, f; for(var i = 0; i < COUNT; ++i)
@@ -58,5 +58,5 @@ var t, f; for(var i = 0; i < COUNT; ++i)
 
 console.dir({	parsed, vanillaParsed,
 		rendered, vanillaRendered	},
-	{ compact: true });
+				{ compact: true });
 

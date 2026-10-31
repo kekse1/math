@@ -21,3 +21,9 @@
 
 		# evtl "alphabet" ALS RADIX.. (customized ;-)
 
+			# evtl auch wieder negative...
+
+		# experimental bigint-radix-cast "(10n)1234", again
+
+		# `test/radix/parse+render.js` anders ausgabe aufbauen (bloecke);
+

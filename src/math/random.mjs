@@ -52,7 +52,7 @@ random.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	random.int.crypto = Math.random.int.crypto =
 		(... _args) => random.int(... _args.slice(0, 3), true);
 
-	random.float = Math.random.float = (_max = 255, _min = 0, _inclusive = true, _crypto = _default.crypto) => {
+	random.float = Math.random.float = (_max = 255, _min = 0, _inclusive = false, _crypto = _default.crypto) => {
 		[ _max, _min ] = [
 			Math.max(_max, _min),
 			Math.min(_min, _max) ];
@@ -79,6 +79,10 @@ random.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		}
 
 		return result;
+	};
+
+	random.radix = Math.random.radix = (_max = Number.RADIX_MAX, _min = Number.RADIX_MIN, _crypto = _default.crypto) => {
+		return Math.random.int(_max, _min, true, _crypto);
 	};
 
 	//

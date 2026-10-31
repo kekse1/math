@@ -25,21 +25,32 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	Reflect.defineProperty(radix, 'maxStringLength', {
 		value: MAX_STRING_LENGTH,
 		writable: false,
-		configurable: false });
+		configurable: false,
+		enumerable: true });
 
 	//
 	Reflect.defineProperty(radix, 'alphabet', { value:
-		ALPHABET, writable: false, configurable: false });
+		ALPHABET, writable: false, configurable: false,
+		enumerable: true });
 	Reflect.defineProperty(radix, 'LOOKUP', { value:
-		LOOKUP, writable: false, configurable: false });
+		LOOKUP, writable: false, configurable: false,
+		enumerable: false });
 	
 	Reflect.defineProperty(Number, 'RADIX_MIN', { value: RADIX_MIN,
-		writable: false, configurable: false });
+		writable: false, configurable: false, enumerable: true });
 	Reflect.defineProperty(Number, 'RADIX_MAX', { value: RADIX_MAX,
-		writable: false, configurable: false });
+		writable: false, configurable: false, enumerable: true });
 	Reflect.defineProperty(radix, 'MIN', { value: RADIX_MIN,
-		writable: false, configurable: false });
+		writable: false, configurable: false, enumerable: true });
 	Reflect.defineProperty(radix, 'MAX', { value: RADIX_MAX,
+		writable: false, configurable: false, enumerable: true });
+	Reflect.defineProperty(Number, 'RADIX_HALF', { value: RADIX_HALF,
+		writable: false, configurable: false, enumerable: true });
+	Reflect.defineProperty(Number, 'RADIX_FULL', { value: RADIX_FULL,
+		writable: false, configurable: false, enumerable: true });
+	Reflect.defineProperty(radix, 'HALF', { value: RADIX_HALF,
+		writable: false, configurable: false, enumerable: true });
+	Reflect.defineProperty(radix, 'FULL', { value: RADIX_FULL,
 		writable: false, configurable: false });
 
 	//
@@ -92,13 +103,21 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	BigInt.zigzag = {};
 	
 	Reflect.defineProperty(Number.zigzag, 'encode', {
-			value: radix.zigzag.encode.Number });
+		value: radix.zigzag.encode.Number,
+		writable: false, configurable: false,
+		enumerable: true });
 	Reflect.defineProperty(Number.zigzag, 'decode', {
-			value: radix.zigzag.decode.Number });
+		value: radix.zigzag.decode.Number,
+		writable: false, configurable: false,
+		enumerable: true });
 	Reflect.defineProperty(BigInt.zigzag, 'encode', {
-			value: radix.zigzag.encode.BigInt });
+		value: radix.zigzag.encode.BigInt,
+		writable: false, configurable: false,
+		enumerable: true });
 	Reflect.defineProperty(BigInt.zigzag, 'decode', {
-			value: radix.zigzag.decode.BigInt });
+		value: radix.zigzag.decode.BigInt,
+		writable: false, configurable: false,
+		enumerable: true });
 
 	const checkBytes = (_bytes, _throw = _default.throw) => {
 		if(typeof _bytes === 'string')
@@ -324,23 +343,33 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 
 	Reflect.defineProperty(Number, 'fromBytes', {
-		value: radix.fromBytes.Number });
+		value: radix.fromBytes.Number,
+		enumerable: true, writable: false,
+		configurable: false });
 	Reflect.defineProperty(BigInt, 'fromBytes', {
-		value: radix.fromBytes.BigInt });
+		value: radix.fromBytes.BigInt,
+		enumerable: true, writable: false,
+		configurable: false });
 	Reflect.defineProperty(Number, 'toBytes', {
-		value: radix.toBytes.Number });
+		value: radix.toBytes.Number,
+		enumerable: true, writable: false,
+		configurable: false });
 	Reflect.defineProperty(BigInt, 'toBytes', {
-		value: radix.toBytes.BigInt });
+		value: radix.toBytes.BigInt,
+		enumerable: true, writable: false,
+		configurable: false });
 	Reflect.defineProperty(Number.prototype, 'toBytes', {
 		value: function(... _args) { return radix.toBytes.
-			Number(this.valueOf(), ... _args); }});
+			Number(this.valueOf(), ... _args); },
+		enumerable: true, writable: false, configurable: false });
 	Reflect.defineProperty(BigInt.prototype, 'toBytes', {
 		value: function(... _args) { return radix.toBytes.
-			BigInt(this.valueOf(), ... _args); }});
+			BigInt(this.valueOf(), ... _args); },
+		enumerable: true, writable: false, configurable: false });
 
 	//
 	radix.parse = {
-		'Number': (_string, _radix = _default.radix, _float = _default.float, _endianness = _default.endianness, _throw = _default.throw) => {
+		'Number': (_string, _radix = _default.radix, _float = _default.float, _throw = _default.throw) => {
 			const	prepared = prepareConversion(_string, _radix);
 			
 			if(!prepared)
@@ -352,76 +381,53 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				
 				return null;
 			}
-			
+
 			const	[ a, b, negative, rdx ] = prepared;
 			var	result = 0,
 				mul = 1,
 				index;
 
-			if(_endianness) switch(_endianness[0].toLowerCase())
+			for(var i = a.length - 1; i >= 0; --i)
 			{
-				case 'b':
-					for(var i = a.length - 1; i >= 0; --i)
+				index = LOOKUP[a.charCodeAt(i)];
+				
+				if((index + 1) > rdx)
+				{
+					if(_throw)
 					{
-						index = LOOKUP[a.charCodeAt(i)];
-						
-						if((index + 1) > rdx)
+						throw new Error('Invalid character[' + i + ']');
+					}
+					
+					return null;
+				}
+				
+				result += (index * mul);
+				mul *= rdx;
+			}
+
+			if(b && _float)
+			{
+				mul = (1 / rdx);
+
+				for(var i = 0; i < b.length; ++i)
+				{
+					index = LOOKUP[b.charCodeAt(i)];
+					
+					if((index + 1) > rdx)
+					{
+						if(_throw)
 						{
-							if(_throw)
-							{
-								throw new Error('Invalid character[' + i + ']');
-							}
-							
-							return null;
+							throw new Error('Invalid character[' + i + ']');
 						}
 						
-						result += (index * mul);
-						mul *= rdx;
+						return null;
 					}
+					
+					result += (index * mul);
+					mul /= rdx;
+				}
+			}
 
-					if(b && _float)
-					{
-						throw new Error('todo');
-					}
-					break;
-				case 'l':
-					for(var i = 0; i < a.length; ++i)
-					{
-						index = LOOKUP[a.charCodeAt(i)];
-						
-						if((index + 1) > rdx)
-						{
-							if(_throw)
-							{
-								throw new Error('Invalid character[' + i + ']');
-							}
-							
-							return null;
-						}
-						
-						result += (index * mul);
-						mul *= rdx;
-					}
-
-					if(b && _float)
-					{
-						throw new Error('todo');
-					}
-					break;
-				default:
-					throw new Error('Invalid _endianness argument/configuration');
-			}
-			else
-			{
-				throw new Error('Invalid _endianness');
-			}
-			
-			if(b)
-			{
-				//
-				throw new Error('todo');
-			}
-			
 			if(negative)
 			{
 				result = (-result || 0);
@@ -448,54 +454,24 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				mul = 1n,
 				index;
 
-			if(_endianness) switch(_endianness[0].toLowerCase())
+			for(var i = a.length - 1; i >= 0; --i)
 			{
-				case 'b':
-					for(var i = a.length - 1; i >= 0; --i)
+				index = LOOKUP[a.charCodeAt(i)];
+				
+				if((index + 1) > rdx)
+				{
+					if(_throw)
 					{
-						index = LOOKUP[a.charCodeAt(i)];
-						
-						if((index + 1) > rdx)
-						{
-							if(_throw)
-							{
-								throw new Error('Invalid character[' + i + ']');
-							}
-							
-							return null;
-						}
-						
-						result += (BigInt(index) * mul);
-						mul *= big;
+						throw new Error('Invalid character[' + i + ']');
 					}
-					break;
-				case 'l':
-					for(var i = 0; i < a.length; ++i)
-					{
-						index = LOOKUP[a.charCodeAt(i)];
-						
-						if((index + 1) > rdx)
-						{
-							if(_throw)
-							{
-								throw new Error('Invalid character[' + i + ']');
-							}
-							
-							return null;
-						}
-						
-						result += (BigInt(index) * mul);
-						mul *= big;
-					}
-					break;
-				default:
-					throw new Error('Invalid _endianness argument/configuration');
+					
+					return null;
+				}
+				
+				result += (BigInt(index) * mul);
+				mul *= big;
 			}
-			else
-			{
-				throw new Error('Invalid _endianness');
-			}
-			
+
 			if(negative)
 			{
 				result = (-result || 0);
@@ -505,15 +481,15 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		}
 	};
 	
-	radix.render = (_value, _radix = _default.radix, _float = _default.float, _endianness = _default.endianness, _throw = _default.throw) => {
+	radix.render = (_value, _radix = _default.radix, _float = _default.float, _throw = _default.throw) => {
 		if(typeof _value === 'number')
 		{
-			return radix.render.Number(_value, _radix, _float, _endianness, _throw);
+			return radix.render.Number(_value, _radix, _float, _throw);
 		}
 		
 		if(typeof _value === 'bigint')
 		{
-			return radix.render.BigInt(_value, _radix, _endianness, _throw);
+			return radix.render.BigInt(_value, _radix, _throw);
 		}
 		
 		if(_throw)
@@ -524,7 +500,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return null;
 	};
 	
-	radix.render.Number = (_value, _radix = _default.radix, _float = _default.float, _endianness = _default.endianness, _throw = _default.throw) => {
+	radix.render.Number = (_value, _radix = _default.radix, _float = _default.float, _throw = _default.throw) => {
 		const	negative = (_value < 0);
 		var	rest = _value,
 			result = '',
@@ -532,40 +508,56 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		
 		if(negative)
 		{
-			rest = (-rest || 0);
+			rest = _value = (-rest || 0);
 		}
 
-		if(_endianness) switch(_endianness[0].toLowerCase())
+		do
 		{
-			case 'b':
-				do
-				{
-					index = (rest % _radix);
-					result = (ALPHABET[index] + result);
-					rest = Math.trunc(rest / _radix);
-				}
-				while(rest >= 1);
-				
-				if(rest > 0 && _float)
-				{
-					throw new Error('todo');
-				}
-				break;
-			case 'l':
-				do
-				{
-					index = (rest % _radix);
-					result += ALPHABET[index];
-					rest = Math.trunc(rest / _radix);
-				}
-				while(rest >= 1);
-				break;
-			default:
-				throw new Error('Invalid _endianness argument/configuration');
+			index = Math.trunc(rest % _radix);
+			result = (ALPHABET[index] + result);
+			rest /= _radix;
 		}
-		else
+		while(rest >= 1);
+
+		if(_float && (rest = (_value % 1)))
 		{
-			throw new Error('Invalid _endianness');
+			var	started = false,
+				bResult = '',
+				zero = 0;
+
+			while(rest % 1)
+			{
+				rest *= _radix;
+				
+				if(!started && rest < 1)
+				{
+					++zero;
+				}
+				else
+				{
+					started = true;
+				}
+			}
+
+			do
+			{
+				index = Math.trunc(rest % _radix);
+				bResult = (ALPHABET[index] + bResult);
+				rest /= _radix;
+			}
+			while(rest >= 1);
+			
+			if(bResult)
+			{
+				result += '.';
+				
+				while(--zero >= 0)
+				{
+					result += ALPHABET[0];
+				}
+				
+				result += bResult;
+			}
 		}
 		
 		if(negative)
@@ -576,7 +568,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return result;
 	};
 	
-	radix.render.BigInt = (_value, _radix = _default.radix, _endianness = _default.endianness, _throw = _default.throw) => {
+	radix.render.BigInt = (_value, _radix = _default.radix, _throw = _default.throw) => {
 		const	negative = (_value < 0n),
 			rdx = BigInt(_radix);
 		var	rest = _value,
@@ -587,34 +579,14 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		{
 			rest = (-rest || 0n);
 		}
-		
-		if(_endianness) switch(_endianness[0].toLowerCase())
+
+		do
 		{
-			case 'b':
-				do
-				{
-					index = Number(rest % rdx);
-					result = (ALPHABET[index] + result);
-					rest /= rdx;
-				}
-				while(rest >= 1n);
-				break;
-			case 'l':
-				do
-				{
-					index = Number(rest % rdx);
-					result += ALPHABET[index];
-					rest /= rdx;
-				}
-				while(rest >= 1n);
-				break;
-			default:
-				throw new Error('Invalid _endianness argument/configuration');
+			index = Number(rest % rdx);
+			result = (ALPHABET[index] + result);
+			rest /= rdx;
 		}
-		else
-		{
-			throw new Error('Invalid _endianness');
-		}
+		while(rest >= 1n);
 		
 		if(negative)
 		{
@@ -678,25 +650,45 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 
 	Reflect.defineProperty(Number, 'parse', {
-		value: radix.parse.Number });
+		value: radix.parse.Number,
+		enumerable: true,
+		writable: false,
+		configurable: false });
 	Reflect.defineProperty(BigInt, 'parse', {
-		value: radix.parse.BigInt });
+		value: radix.parse.BigInt,
+		enumerable: true,
+		writable: false,
+		configurable: false });
 	Reflect.defineProperty(Number, 'render', {
-		value: radix.render.Number });
+		value: radix.render.Number,
+		enumerable: true,
+		writable: false,
+		configurable: false });
 	Reflect.defineProperty(BigInt, 'render', {
-		value: radix.render.BigInt });
+		value: radix.render.BigInt,
+		enumerable: true,
+		writable: false,
+		configurable: false });
 	Reflect.defineProperty(Number.prototype, 'render', {
 		value: function(... _args) { return radix.render.
-			Number(this.valueOf(), ... _args); }});
+			Number(this.valueOf(), ... _args); },
+		enumerable: true, writable: false, configurable: false });
 	Reflect.defineProperty(BigInt.prototype, 'render', {
 		value: function(... _args) { return radix.render.
-			BigInt(this.valueOf(), ... _args); }});
+			BigInt(this.valueOf(), ... _args); },
+		enumerable: true, writable: false, configurable: false });
 	
 	Reflect.defineProperty(String, 'isNumeric', {
-		value: radix.isNumeric });
+		value: radix.isNumeric,
+		enumerable: false,
+		writable: false,
+		configurable: false });
 	Reflect.defineProperty(String.prototype, 'isNumeric', {
 		value: function(... _args) { return radix.
-			isNumeric(this.valueOf(), ... _args); }});
+			isNumeric(this.valueOf(), ... _args); },
+		enumerable: false,
+		writable: false,
+		configurable: false });
 
 	Reflect.defineProperty(globalThis, 'isNumeric', { get: (_value) => {
 		if(typeof _value === 'bigint')
@@ -919,12 +911,23 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	//
-	Reflect.defineProperty(Number, 'isRadix', { value: radix.isRadix });
-	Reflect.defineProperty(Number, 'isHalfRadix', { value: radix.isHalfRadix });
-	Reflect.defineProperty(Number, 'isFullRadix', { value: radix.isFullRadix });
-	Reflect.defineProperty(Number, 'sign', { value: radix.sign });
-	Reflect.defineProperty(Number, 'cast', { value: radix.cast });
-
+	//TODO/"BigInt" auch dazu?? und sonstwo auch noch was MIT dorthin!??
+	//
+	Reflect.defineProperty(Number, 'isRadix', { value: radix.isRadix,
+		enumerable: true, writable: false, configurable: false });
+	Reflect.defineProperty(Number, 'sign', { value: radix.sign,
+		enumerable: true, writable: false, configurable: false });
+	Reflect.defineProperty(String.prototype, 'sign', { value: function()
+		{ return radix.sign(this.valueOf()); }});
+	Reflect.defineProperty(Number, 'cast', { value: radix.cast,
+		enumerable: true, writable: false, configurable: false });
+	Reflect.defineProperty(String.prototype, 'cast', { value: function()
+		{ return radix.cast(this.valueOf()); }});
+	Reflect.defineProperty(Number, 'isHalfRadix', { value: radix.isHalfRadix,
+		writable: false, configurable: false, enumerable: true });
+	Reflect.defineProperty(Number, 'isFullRadix', { value: radix.isFullRadix,
+		writable: false, configurable: false, enumerable: true });
+	
 	//
 
 };

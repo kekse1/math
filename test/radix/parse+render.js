@@ -9,11 +9,11 @@ import	math from '../../src/math.mjs';
 //
 
 //
-const	DEC = false;
+const	DEC = true;
 const	COUNT = 10,
 	MAX = ((2**32)-1),
 	MIN = -MAX,
-	ROUND = 14,
+	ROUND = 12,
 	RDX = Number.RADIX_MAX; // (62), btw.
 
 //
@@ -37,22 +37,33 @@ for(var i = 0; i < COUNT; ++i)
 
 var t, f; for(var i = 0; i < COUNT; ++i)
 {
-	rendered[integer[i] + '  // int (' + radix[i] + ')'] =
-			t = integer[i].render(radix[i]);
-	rendered[float[i] + '  // float (' + radix[i] + ')'] =
-			f = float[i].render(radix[i]);
+	rendered['(' + radix[i] + ')' + integer[i]] =
+		t = integer[i].render(radix[i]);
+	rendered['(' + radix[i] + ')' + float[i]] =
+		f = float[i].render(radix[i]);
 
-	parsed[t + '  // int (' + radix[i] + ')'] =
-			Number.parse(t, radix[i]);
-	parsed[f + '  // float (' + radix[i] + ')'] =
-			Number.parse(f, radix[i]);
+	parsed['(' + radix[i] + ')' + t] =
+		Number.parse(t, radix[i]);
+	parsed['(' + radix[i] + ')' + f] =
+		Number.parse(f, radix[i]);
 
 	if(Number.isHalfRadix(radix[i]))
 	{
-		vanillaRendered[float[i] + '  // float (' +
-			radix[i] + ')'] = float[i].toString(radix[i]);
-		vanillaParsed[t + '  // int (' + radix[i] + ')'] =
+		vanillaRendered['(' + radix[i] + ')' + integer[i]] =
+			integer[i].toString(radix[i]);
+		vanillaRendered['(' + radix[i] + ')' + float[i]] =
+			float[i].toString(radix[i]);
+		vanillaParsed['(' + radix[i] + ')' + t] =
 			Number.parseInt(integer[i], radix[i]);
+		vanillaParsed['(' + radix[i] + ')' + f] = null;
+	}
+	else
+	{
+		vanillaRendered['(' + radix[i] + ')' + integer[i]] =
+			vanillaRendered['(' + radix[i] + ')' + float[i]] =
+			vanillaParsed['(' + radix[i] + ')' + t] =
+			vanillaParsed['(' + radix[i] + ')' + f] =
+				null;
 	}
 }
 

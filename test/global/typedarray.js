@@ -4,7 +4,7 @@
 const	DEPTH = 6;
 
 //
-import * as math from '../../src/math.mjs';
+import	math from '../../src/math.mjs';
 
 //
 console.dir({ TypedArray },

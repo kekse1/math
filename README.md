@@ -48,6 +48,19 @@ Most of these modules are still (pure) **TODO**.
 
 See also the [**`test/`**](./test/)s.
 
+<br><br>
+
+# Comments / Links
+I just found [**mathjs.org**](https://mathjs.org/), which looks good.
+
+But I don't want this one to be a replacement for that one!
+
+I just made this out of necessity and fun, for my own codes
+to be archived somewhere. And I though these functions could
+be interesting for my own applications. So please don't expect
+**that** much code in here. It's just something I usually use
+for myself. ;-)
+
 <br><br><br>
 
 # Contact

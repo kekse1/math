@@ -63,9 +63,31 @@ random.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	random.float.crypto = Math.random.float.crypto =
 		(... _args) => random.float(... _args.slice(0, 3), true);
 
+	// always crypto..
 	random.bytes = Math.random.bytes = (_count = 1) => {
 		return crypto.getRandomValues(
 			new Uint8Array(_count || 1));
+	};
+
+	// always crypto..
+	random.string = Math.random.string = (_count = 1) => {
+		return String.create(random.bytes(_count));
+	};
+
+	random.string.printable = Math.random.string.printable = (_count = 1, _crypto = _default.crypto) => {
+throw new Error('TODO');
+	};
+
+	random.string.printable.crypto = Math.random.string.printable.crypto = (_count = 1) => {
+		return random.string.printable(_count, true);
+	};
+
+	random.fromString = Math.random.fromString = (_count = 1, _string = _math.radix.alphabet, _crypto = _default.crypto) => {
+throw new Error('TODO');
+	};
+
+	random.fromString.crypto = Math.random.fromString.crypto = (_count = 1, _string = _math.radix.alphabet) => {
+		return random.fromString(_count, _string, true);
 	};
 
 	random.bytes.crypto = Math.random.bytes.crypto = random.bytes;

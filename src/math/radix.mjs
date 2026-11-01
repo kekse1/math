@@ -52,6 +52,12 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		writable: false, configurable: false, enumerable: true });
 	Reflect.defineProperty(radix, 'FULL', { value: RADIX_FULL,
 		writable: false, configurable: false });
+		
+	//
+	Reflect.defineProperty(String.prototype, 'trunc', { value: function()
+	{
+		return this.split('.')[0];
+	}});
 
 	//
 	radix.zigzag = {};
@@ -541,43 +547,15 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 
 		if(_float && (rest = (_value % 1)))
 		{
-			var	started = false,
-				bResult = '',
-				zero = 0;
-
-			while(rest % 1)
-			{
-				rest *= _radix;
-				
-				if(!started && rest < 1)
-				{
-					++zero;
-				}
-				else
-				{
-					started = true;
-				}
-			}
-
+			result += '.';
+			
 			do
 			{
+				rest *= _radix;
 				index = Math.trunc(rest % _radix);
-				bResult = (ALPHABET[index] + bResult);
-				rest /= _radix;
+				result += ALPHABET[index];
 			}
-			while(rest >= 1);
-			
-			if(bResult)
-			{
-				result += '.';
-				
-				while(--zero >= 0)
-				{
-					result += ALPHABET[0];
-				}
-				
-				result += bResult;
-			}
+			while(rest % 1);
 		}
 		
 		if(negative)
@@ -854,6 +832,10 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			_string.substr(count));
 	};
 	
+	//
+	//FYI: s00n i'll extend this one for bigint-radix,
+	//e.g. '(16n)1234'. again...
+	//
 	radix.cast = (_string, _fallback = _default.radix) => {
 		if(_string[0] !== '(')
 		{
@@ -963,12 +945,14 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		enumerable: true, writable: false, configurable: false });
 	Reflect.defineProperty(Number, 'sign', { value: radix.sign,
 		enumerable: true, writable: false, configurable: false });
-	Reflect.defineProperty(String.prototype, 'sign', { value: function()
-		{ return radix.sign(this.valueOf()); }});
+	Reflect.defineProperty(String.prototype, 'sign', { value: function(... _args)
+		{ return radix.sign(this.valueOf(), ... _args); }});
 	Reflect.defineProperty(Number, 'cast', { value: radix.cast,
 		enumerable: true, writable: false, configurable: false });
-	Reflect.defineProperty(String.prototype, 'cast', { value: function()
-		{ return radix.cast(this.valueOf()); }});
+	Reflect.defineProperty(BigInt, 'cast', { value: radix.cast,
+		enumerable: true, writable: false, configurable: false });
+	Reflect.defineProperty(String.prototype, 'cast', { value: function(... _args)
+		{ return radix.cast(this.valueOf(), ... _args); }});
 	Reflect.defineProperty(Number, 'isHalfRadix', { value: radix.isHalfRadix,
 		writable: false, configurable: false, enumerable: true });
 	Reflect.defineProperty(Number, 'isFullRadix', { value: radix.isFullRadix,

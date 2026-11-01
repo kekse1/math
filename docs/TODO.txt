@@ -19,13 +19,17 @@
 
 			# wg. rundungsfehler, bzw. 00000 oder 9999 ....
 
+				# easiest solution: count the amount of consecutive ...
+
+					# .. ALPHABET[0] / ALPHABET[radix - 1];
+
 		# evtl "alphabet" ALS RADIX.. (customized ;-)
 
 			# evtl auch wieder negative...
 
 		# experimental bigint-radix-cast "(10n)1234", again
 
-		# `test/radix/parse+render.js` anders ausgabe aufbauen (bloecke);
+???	# https://mathjs.org/
 
-		# denke, float-rendering geht besser!! ;-)
+??		# https://mathjs.org/docs/datatypes/bignumbers.html
 

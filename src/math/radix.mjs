@@ -25,21 +25,32 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	Reflect.defineProperty(radix, 'maxStringLength', {
 		value: MAX_STRING_LENGTH,
 		writable: false,
-		configurable: false });
+		configurable: false,
+		enumerable: true });
 
 	//
 	Reflect.defineProperty(radix, 'alphabet', { value:
-		ALPHABET, writable: false, configurable: false });
+		ALPHABET, writable: false, configurable: false,
+		enumerable: true });
 	Reflect.defineProperty(radix, 'LOOKUP', { value:
-		LOOKUP, writable: false, configurable: false });
+		LOOKUP, writable: false, configurable: false,
+		enumerable: false });
 	
 	Reflect.defineProperty(Number, 'RADIX_MIN', { value: RADIX_MIN,
-		writable: false, configurable: false });
+		writable: false, configurable: false, enumerable: true });
 	Reflect.defineProperty(Number, 'RADIX_MAX', { value: RADIX_MAX,
-		writable: false, configurable: false });
+		writable: false, configurable: false, enumerable: true });
 	Reflect.defineProperty(radix, 'MIN', { value: RADIX_MIN,
-		writable: false, configurable: false });
+		writable: false, configurable: false, enumerable: true });
 	Reflect.defineProperty(radix, 'MAX', { value: RADIX_MAX,
+		writable: false, configurable: false, enumerable: true });
+	Reflect.defineProperty(Number, 'RADIX_HALF', { value: RADIX_HALF,
+		writable: false, configurable: false, enumerable: true });
+	Reflect.defineProperty(Number, 'RADIX_FULL', { value: RADIX_FULL,
+		writable: false, configurable: false, enumerable: true });
+	Reflect.defineProperty(radix, 'HALF', { value: RADIX_HALF,
+		writable: false, configurable: false, enumerable: true });
+	Reflect.defineProperty(radix, 'FULL', { value: RADIX_FULL,
 		writable: false, configurable: false });
 
 	//
@@ -92,13 +103,21 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	BigInt.zigzag = {};
 	
 	Reflect.defineProperty(Number.zigzag, 'encode', {
-			value: radix.zigzag.encode.Number });
+		value: radix.zigzag.encode.Number,
+		writable: false, configurable: false,
+		enumerable: true });
 	Reflect.defineProperty(Number.zigzag, 'decode', {
-			value: radix.zigzag.decode.Number });
+		value: radix.zigzag.decode.Number,
+		writable: false, configurable: false,
+		enumerable: true });
 	Reflect.defineProperty(BigInt.zigzag, 'encode', {
-			value: radix.zigzag.encode.BigInt });
+		value: radix.zigzag.encode.BigInt,
+		writable: false, configurable: false,
+		enumerable: true });
 	Reflect.defineProperty(BigInt.zigzag, 'decode', {
-			value: radix.zigzag.decode.BigInt });
+		value: radix.zigzag.decode.BigInt,
+		writable: false, configurable: false,
+		enumerable: true });
 
 	const checkBytes = (_bytes, _throw = _default.throw) => {
 		if(typeof _bytes === 'string')
@@ -126,7 +145,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	radix.fromBytes = {
-		Number: (_bytes, _endianness = _default.endianness, _throw = _default.throw) => {
+		Number: (_bytes, _endianness = _default.endianness, _unsigned = _default.unsigned, _throw = _default.throw) => {
 			if((_bytes = checkBytes(_bytes, _throw)) === null)
 			{
 				return null;
@@ -135,7 +154,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			var	result = 0,
 				mul = 1;
 			
-			switch(_endianness[0].toLowerCase())
+			if(_endianness) switch(_endianness[0].toLowerCase())
 			{
 				case 'b':
 					for(var i = _bytes.length - 1; i >= 0; --i)
@@ -154,10 +173,19 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				default:
 					throw new Error('Invalid _endianness argument/configuration');
 			}
-
+			else
+			{
+				throw new Error('Invalid _endianness');
+			}
+			
+			if(_unsigned)
+			{
+				return result;
+			}
+			
 			return radix.zigzag.decode.Number(result);
 		},
-		BigInt: (_bytes, _endianness = _default.endianness, _throw = _default.throw) => {
+		BigInt: (_bytes, _endianness = _default.endianness, _unsigned = _default.unsigned, _throw = _default.throw) => {
 			if((_bytes = checkBytes(_bytes, _throw)) === null)
 			{
 				return null;
@@ -166,7 +194,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			var	result = 0n,
 				mul = 1n;
 			
-			switch(_endianness[0].toLowerCase())
+			if(_endianness) switch(_endianness[0].toLowerCase())
 			{
 				case 'b':
 					for(var i = _bytes.length - 1; i >= 0; --i)
@@ -185,22 +213,33 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				default:
 					throw new Error('Invalid _endianness argument/configuration');
 			}
+			else
+			{
+				throw new Error('Invalid _endianness');
+			}
 
+			if(_unsigned)
+			{
+				return result;
+			}
+			
 			return radix.zigzag.decode.BigInt(result);
 		}
 	};
 	
-	radix.toBytes = (_value, _endianness = _default.endianness, _throw = _default.throw) => {
+	radix.toBytes = (_value, _endianness = _default.endianness, _unsigned = _default.unsigned, _throw = _default.throw) => {
 		if(typeof _value === 'bigint')
 		{
 			return radix.toBytes.BigInt(
-				_value, _endianness, _throw);
+				_value, _endianness,
+				_unsigned, _throw);
 		}
 		
 		if(Number.isFinite(_value))
 		{
 			return radix.toBytes.Number(
-				_value, _endianness, _throw);
+				_value, _endianness,
+				_unsigned, _throw);
 		}
 		
 		if(_throw)
@@ -211,15 +250,24 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return null;
 	};
 	
-	radix.toBytes.BigInt = (_value, _endianness = _default.endianness, _throw = _default.throw) => {
+	radix.toBytes.BigInt = (_value, _endianness = _default.endianness, _unsigned = _default.unsigned, _throw = _default.throw) => {
 		const	result = [];
-		var	rest = radix.zigzag.encode.BigInt(_value);
+		var	rest = _value;
+		
+		if(!_unsigned)
+		{
+			rest = radix.zigzag.encode.BigInt(rest);
+		}
+		else if(rest < 0n)
+		{
+			throw new Error('You enabled _unsigned, but your value is below zero.');
+		}
 
 		if(rest === 0n)
 		{
 			result = [ 0 ];
 		}
-		else switch(_endianness[0].toLowerCase())
+		else if(_endianness) switch(_endianness[0].toLowerCase())
 		{
 			case 'b':
 				do
@@ -240,116 +288,447 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			default:
 				throw new Error('Invalid _endianness argument/configuration');
 		}
+		else
+		{
+			throw new Error('Invalid _endianness');
+		}
 
 		return new Uint8Array(result);
 	};
 
-	radix.toBytes.Number = (_value, _endianness = _default.endianness, _throw = _default.throw) => {
+	radix.toBytes.Number = (_value, _endianness = _default.endianness, _unsigned = _default.unsigned, _throw = _default.throw) => {
 		const	result = [];
-		var	rest = radix.zigzag.encode.Number(_value);
+		var	rest = _value;
+		
+		if(!_unsigned)
+		{
+			rest = radix.zigzag.encode.Number(rest);
+		}
+		else if(rest < 0)
+		{
+			throw new Error('You enabled _unsigned, but your value is below zero.');
+		}
 
 		if(rest === 0)
 		{
 			result = [ 0 ];
 		}
-		else switch(_endianness[0].toLowerCase())
+		else if(_endianness) switch(_endianness[0].toLowerCase())
 		{
 			case 'b':
 				do
 				{
-					result.unshift(Math.trunc(rest % 256));
-					
-					if(true)
-					{
-						rest = Math.trunc(rest / 256);
-					}
-					else
-					{
-						rest /= 256;
-					}
+					result.unshift(rest % 256);
+					rest = Math.trunc(rest / 256);
 				}
 				while(rest >= 1);
 				break;
 			case 'l':
 				do
 				{
-					result.push(Math.trunc(rest % 256));
-					
-					if(true)
-					{
-						rest = Math.trunc(rest / 256);
-					}
-					else
-					{
-						rest /= 256;
-					}
+					result.push(rest % 256);
+					rest = Math.trunc(rest / 256);
 				}
 				while(rest >= 1);
 				break;
 			default:
 				throw new Error('Invalid _endianness argument/configuration');
 		}
+		else
+		{
+			throw new Error('Invalid _endianness');
+		}
 
 		return new Uint8Array(result);
 	};
 
 	Reflect.defineProperty(Number, 'fromBytes', {
-		value: radix.fromBytes.Number });
+		value: radix.fromBytes.Number,
+		enumerable: true, writable: false,
+		configurable: false });
 	Reflect.defineProperty(BigInt, 'fromBytes', {
-		value: radix.fromBytes.BigInt });
+		value: radix.fromBytes.BigInt,
+		enumerable: true, writable: false,
+		configurable: false });
 	Reflect.defineProperty(Number, 'toBytes', {
-		value: radix.toBytes.Number });
+		value: radix.toBytes.Number,
+		enumerable: true, writable: false,
+		configurable: false });
 	Reflect.defineProperty(BigInt, 'toBytes', {
-		value: radix.toBytes.BigInt });
+		value: radix.toBytes.BigInt,
+		enumerable: true, writable: false,
+		configurable: false });
 	Reflect.defineProperty(Number.prototype, 'toBytes', {
 		value: function(... _args) { return radix.toBytes.
-			Number(this.valueOf(), ... _args); }});
+			Number(this.valueOf(), ... _args); },
+		enumerable: true, writable: false, configurable: false });
 	Reflect.defineProperty(BigInt.prototype, 'toBytes', {
 		value: function(... _args) { return radix.toBytes.
-			BigInt(this.valueOf(), ... _args); }});
+			BigInt(this.valueOf(), ... _args); },
+		enumerable: true, writable: false, configurable: false });
 
 	//
-	//TODO/see (NEW) LOOK-UP-TABLE!!1 ;-D
-	//TODO/don't forget ZIGZAG - MAYBE?! ...
-	//
 	radix.parse = {
-		'Number': () => {
-		
+		'Number': (_string, _radix = _default.radix, _float = _default.float, _throw = _default.throw) => {
+			const	prepared = prepareConversion(_string, _radix);
+			
+			if(!prepared)
+			{
+				if(_throw)
+				{
+					throw new Error('Invalid argument(s)');
+				}
+				
+				return null;
+			}
+
+			const	[ a, b, negative, rdx ] = prepared;
+			var	result = 0,
+				mul = 1,
+				index;
+
+			for(var i = a.length - 1; i >= 0; --i)
+			{
+				index = LOOKUP[a.charCodeAt(i)];
+				
+				if((index + 1) > rdx)
+				{
+					if(_throw)
+					{
+						throw new Error('Invalid character[' + i + ']');
+					}
+					
+					return null;
+				}
+				
+				result += (index * mul);
+				mul *= rdx;
+			}
+
+			if(b && _float)
+			{
+				mul = (1 / rdx);
+
+				for(var i = 0; i < b.length; ++i)
+				{
+					index = LOOKUP[b.charCodeAt(i)];
+					
+					if((index + 1) > rdx)
+					{
+						if(_throw)
+						{
+							throw new Error('Invalid character[' + i + ']');
+						}
+						
+						return null;
+					}
+					
+					result += (index * mul);
+					mul /= rdx;
+				}
+			}
+
+			if(negative)
+			{
+				result = (-result || 0);
+			}
+			
+			return result;	
 		},
-		'BigInt': () => {
-		
+		'BigInt': (_string, _radix = _default.radix, _throw = _default.throw) => {
+			const	prepared = prepareConversion(_string, _radix);
+			
+			if(!prepared)
+			{
+				if(_throw)
+				{
+					throw new Error('Invalid argument(s)');
+				}
+				
+				return null;
+			}
+			
+			const	[ a, b, negative, rdx ] = prepared,
+				big = BigInt(rdx);
+			var	result = 0n,
+				mul = 1n,
+				index;
+
+			for(var i = a.length - 1; i >= 0; --i)
+			{
+				index = LOOKUP[a.charCodeAt(i)];
+				
+				if((index + 1) > rdx)
+				{
+					if(_throw)
+					{
+						throw new Error('Invalid character[' + i + ']');
+					}
+					
+					return null;
+				}
+				
+				result += (BigInt(index) * mul);
+				mul *= big;
+			}
+
+			if(negative)
+			{
+				result = (-result || 0);
+			}
+			
+			return result;
 		}
 	};
 	
-	radix.render = {
-		'Number': () => {
-		
-		},
-		'BigInt': () => {
-		
+	radix.render = (_value, _radix = _default.radix, _float = _default.float, _throw = _default.throw) => {
+		if(typeof _value === 'number')
+		{
+			return radix.render.Number(_value, _radix, _float, _throw);
 		}
+		
+		if(typeof _value === 'bigint')
+		{
+			return radix.render.BigInt(_value, _radix, _throw);
+		}
+		
+		if(_throw)
+		{
+			throw new Error('Invalid _value argument');
+		}
+		
+		return null;
+	};
+	
+	radix.render.Number = (_value, _radix = _default.radix, _float = _default.float, _throw = _default.throw) => {
+		if(!Number.isFinite(_value))
+		{
+			if(_throw)
+			{
+				throw new Error('Invalid _value');
+			}
+
+			return null;
+		}
+
+		if(!radix.isRadix(_radix))
+		{
+			if(_throw)
+			{
+				throw new Error('Invalid _radix');
+			}
+
+			return null;
+		}
+
+		const	negative = (_value < 0);
+		var	rest = _value,
+			result = '',
+			index;
+		
+		if(negative)
+		{
+			rest = _value = (-rest || 0);
+		}
+
+		do
+		{
+			index = Math.trunc(rest % _radix);
+			result = (ALPHABET[index] + result);
+			rest /= _radix;
+		}
+		while(rest >= 1);
+
+		if(_float && (rest = (_value % 1)))
+		{
+			var	started = false,
+				bResult = '',
+				zero = 0;
+
+			while(rest % 1)
+			{
+				rest *= _radix;
+				
+				if(!started && rest < 1)
+				{
+					++zero;
+				}
+				else
+				{
+					started = true;
+				}
+			}
+
+			do
+			{
+				index = Math.trunc(rest % _radix);
+				bResult = (ALPHABET[index] + bResult);
+				rest /= _radix;
+			}
+			while(rest >= 1);
+			
+			if(bResult)
+			{
+				result += '.';
+				
+				while(--zero >= 0)
+				{
+					result += ALPHABET[0];
+				}
+				
+				result += bResult;
+			}
+		}
+		
+		if(negative)
+		{
+			result = ('-' + result);
+		}
+		
+		return result;
+	};
+	
+	radix.render.BigInt = (_value, _radix = _default.radix, _throw = _default.throw) => {
+		if(typeof _value !== 'bigint')
+		{
+			if(_throw)
+			{
+				throw new Error('Invalid _value');
+			}
+
+			return null;
+		}
+
+		if(!radix.isRadix(_radix))
+		{
+			if(_throw)
+			{
+				throw new Error('Invalid _radix');
+			}
+
+			return null;
+		}
+
+		const	negative = (_value < 0n),
+			rdx = BigInt(_radix);
+		var	rest = _value,
+			result = '',
+			index;
+		
+		if(negative)
+		{
+			rest = (-rest || 0n);
+		}
+
+		do
+		{
+			index = Number(rest % rdx);
+			result = (ALPHABET[index] + result);
+			rest /= rdx;
+		}
+		while(rest >= 1n);
+		
+		if(negative)
+		{
+			result = ('-' + result);
+		}
+		
+		return result;
+	};
+	
+	//
+	radix.isNumeric = (_string, _radix = _default.radix) => {
+		if(typeof _string === 'number')
+		{
+			return Number.isFinite(_string);
+		}
+		else if(typeof _string === 'bigint')
+		{
+			return true;
+		}
+		else if(typeof _string !== 'string')
+		{
+			return null;
+		}
+		
+		if(_string.length === 0)
+		{
+			return true;
+		}
+		
+		const	prepared = prepareConversion(_string, _radix);
+			
+		if(!prepared)
+		{
+			return false;
+		}
+		
+		const	[ a, b, negative, rdx ] = prepared;
+		var	index;
+
+		for(var i = 0; i < a.length; ++i)
+		{
+			index = LOOKUP[a.charCodeAt(i)];
+			
+			if((index + 1) > rdx)
+			{
+				return false;
+			}
+		}
+		
+		for(var i = 0; i < b.length; ++i)
+		{
+			index = LOOKUP[b.charCodeAt(i)];
+			
+			if((index + 1) > rdx)
+			{
+				return false;
+			}
+		}
+		
+		return true;
 	};
 
 	Reflect.defineProperty(Number, 'parse', {
-		value: radix.parse.Number });
+		value: radix.parse.Number,
+		enumerable: true,
+		writable: false,
+		configurable: false });
 	Reflect.defineProperty(BigInt, 'parse', {
-		value: radix.parse.BigInt });
+		value: radix.parse.BigInt,
+		enumerable: true,
+		writable: false,
+		configurable: false });
 	Reflect.defineProperty(Number, 'render', {
-		value: radix.render.Number });
+		value: radix.render.Number,
+		enumerable: true,
+		writable: false,
+		configurable: false });
 	Reflect.defineProperty(BigInt, 'render', {
-		value: radix.render.BigInt });
+		value: radix.render.BigInt,
+		enumerable: true,
+		writable: false,
+		configurable: false });
 	Reflect.defineProperty(Number.prototype, 'render', {
 		value: function(... _args) { return radix.render.
-			Number(this.valueOf(), ... _args); }});
+			Number(this.valueOf(), ... _args); },
+		enumerable: true, writable: false, configurable: false });
 	Reflect.defineProperty(BigInt.prototype, 'render', {
 		value: function(... _args) { return radix.render.
-			BigInt(this.valueOf(), ... _args); }});
+			BigInt(this.valueOf(), ... _args); },
+		enumerable: true, writable: false, configurable: false });
 	
 	Reflect.defineProperty(String, 'isNumeric', {
-		value: radix.isNumeric });
+		value: radix.isNumeric,
+		enumerable: false,
+		writable: false,
+		configurable: false });
 	Reflect.defineProperty(String.prototype, 'isNumeric', {
 		value: function(... _args) { return radix.
-			isNumeric(this.valueOf(), ... _args); }});
+			isNumeric(this.valueOf(), ... _args); },
+		enumerable: false,
+		writable: false,
+		configurable: false });
 
 	Reflect.defineProperty(globalThis, 'isNumeric', { get: (_value) => {
 		if(typeof _value === 'bigint')
@@ -446,6 +825,16 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	radix.sign = (_string) => {
+		if(typeof _string !== 'string')
+		{
+			return null;
+		}
+
+		if(_string.length === 0)
+		{
+			return '';
+		}
+
 		var	negative = false,
 			count = 0;
 		
@@ -482,64 +871,11 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		
 		if(!radix.isRadix(result))
 		{
-			return [ _string, _fallback || null ];
+			return [ _string, null ];
+			//return [ _string, _fallback || null ];
 		}
 
 		return [ _string.substr(idx + 1), result ];
-	};
-
-	radix.isNumeric = (_string, _radix = _default.radix) => {
-		if(typeof _string === 'number')
-		{
-			return Number.isFinite(_string);
-		}
-		else if(typeof _string === 'bigint')
-		{
-			return true;
-		}
-		else if(typeof _string !== 'string')
-		{
-			return null;
-		}
-		
-		if(_string.length === 0)
-		{
-			return true;
-		}
-		
-		const	prepared = prepareConversion(
-				_string, _radix);
-			
-		if(!prepared)
-		{
-			return false;
-		}
-		
-		const	[ a, b, negative, rdx ] = prepared;
-		var	index;
-		
-		//
-		for(var i = 0; i < a.length; ++i)
-		{
-			index = LOOKUP[a.charCodeAt(i)];
-			
-			if((index + 1) > rdx)
-			{
-				return false;
-			}
-		}
-		
-		for(var i = 0; i < b.length; ++i)
-		{
-			index = LOOKUP[b.charCodeAt(i)];
-			
-			if((index + 1) > rdx)
-			{
-				return false;
-			}
-		}
-		
-		return true;
 	};
 
 	const prepareConversion = (_string, _radix = _default.radix) => {
@@ -566,6 +902,11 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 
 		[ _string, _radix ] = radix.cast(
 			_string, _radix);
+
+		if(_radix === null)
+		{
+			return null;
+		}
 
 		if((a = radix.sign(a))[0] === '-')
 		{
@@ -616,53 +957,22 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	};
 	
 	//
-	Reflect.defineProperty(Number, 'isRadix', { value: radix.isRadix });
-	Reflect.defineProperty(Number, 'isHalfRadix', { value: radix.isHalfRadix });
-	Reflect.defineProperty(Number, 'isFullRadix', { value: radix.isFullRadix });
-	Reflect.defineProperty(Number, 'sign', { value: radix.sign });
-	Reflect.defineProperty(Number, 'cast', { value: radix.cast });
-
+	//TODO/"BigInt" auch dazu?? und sonstwo auch noch was MIT dorthin!??
 	//
-	radix.findRadix = (_string) => {
-		const	prepared = prepareConversion(
-				_string, null);
-		
-		if(!prepared)
-		{
-			return null;
-		}
-		
-		const	[ a, b ] = prepared;
-		var	max = 0,
-			index;
-		
-		for(var i = 0; i < a.length; ++i)
-		{
-			index = radix.LOOKUP.full[a.charCodeAt(i)];
-			
-			if(index > max)
-			{
-				max = index;
-			}
-		}
-		
-		for(var i = 0; i < b.length; ++i)
-		{
-			index = radix.LOOKUP.full[b.charCodeAt(i)];
-			
-			if(index > max)
-			{
-				max = index;
-			}
-		}
-		
-		if(max > radix.MAX)
-		{
-			return null;
-		}
-		
-		return max;
-	};
+	Reflect.defineProperty(Number, 'isRadix', { value: radix.isRadix,
+		enumerable: true, writable: false, configurable: false });
+	Reflect.defineProperty(Number, 'sign', { value: radix.sign,
+		enumerable: true, writable: false, configurable: false });
+	Reflect.defineProperty(String.prototype, 'sign', { value: function()
+		{ return radix.sign(this.valueOf()); }});
+	Reflect.defineProperty(Number, 'cast', { value: radix.cast,
+		enumerable: true, writable: false, configurable: false });
+	Reflect.defineProperty(String.prototype, 'cast', { value: function()
+		{ return radix.cast(this.valueOf()); }});
+	Reflect.defineProperty(Number, 'isHalfRadix', { value: radix.isHalfRadix,
+		writable: false, configurable: false, enumerable: true });
+	Reflect.defineProperty(Number, 'isFullRadix', { value: radix.isFullRadix,
+		writable: false, configurable: false, enumerable: true });
 	
 	//
 

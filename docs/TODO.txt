@@ -1,0 +1,31 @@
+
+	# v.a. siehe 'TODO/' als referenz... erstmal.
+
+	# mehr ordnung noch...
+
+		# v.a. die "Reflect.defineProperty()" passend...
+
+			# .. von wegen auch {writable,configurable,enumerable};
+
+		# und guck', inwieweit auch *parallel* die ganzen objekte mit essenz...?
+
+	@ radix
+
+		# noch eine 'String[..].round()'-version!?!
+
+			# ... direkt im string, statt mathematisch. ...
+
+		# EPSILON noch @ render....
+
+			# wg. rundungsfehler, bzw. 00000 oder 9999 ....
+
+		# evtl "alphabet" ALS RADIX.. (customized ;-)
+
+			# evtl auch wieder negative...
+
+		# experimental bigint-radix-cast "(10n)1234", again
+
+		# `test/radix/parse+render.js` anders ausgabe aufbauen (bloecke);
+
+		# denke, float-rendering geht besser!! ;-)
+

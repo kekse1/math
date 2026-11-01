@@ -15,7 +15,10 @@ const	A = a.toRandomized(false),
 	B = b.toRandomized(true);
 
 //
-console.dir({ a, b, A, B });
+const	C = '0123456789'.randomize();
+
+//
+console.dir({ a, b, A, B, C });
 console.dir({
 	'a === b': (a === b),
 	'a === A': (a === A),

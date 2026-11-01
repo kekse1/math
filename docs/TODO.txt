@@ -27,3 +27,5 @@
 
 		# `test/radix/parse+render.js` anders ausgabe aufbauen (bloecke);
 
+		# denke, float-rendering geht besser!! ;-)
+

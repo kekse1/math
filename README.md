@@ -53,7 +53,7 @@ See also the [**`test/`**](./test/)s.
 # Comments / Links
 I just found [**mathjs.org**](https://mathjs.org/), which looks good.
 
-But I don't want this one to be a replacement for that one!
+But I don't want this one to be a replacement for that one.
 
 I just made this out of necessity and fun, for my own codes
 to be archived somewhere. And I though these functions could

@@ -29,6 +29,12 @@
 
 		# experimental bigint-radix-cast "(10n)1234", again
 
+		# ich wuerde genre meine sehr haeufig genutzte `bytes()`-funktion der `bash` auch hier mit dazu...
+
+			# ... so als ausnahme eher. ich nutze sie naeml. recht haeufig in der `bash`...
+
+				# .. evtl. mehr daraus machen? `math.sh`??? xD~
+
 ???	# https://mathjs.org/
 
 ??		# https://mathjs.org/docs/datatypes/bignumbers.html

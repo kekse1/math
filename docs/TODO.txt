@@ -35,6 +35,12 @@
 
 				# .. evtl. mehr daraus machen? `math.sh`??? xD~
 
+			# siehe `./sh.TODO.tmp/`....
+
+!!!1				# ABER NOCHMAL GANZ NEU SCHREIBEN!!
+
+!!1					# UND ZWAR mit `awk` fuer die artithmetik (WICHTIGst!!!1)!!1
+
 ???	# https://mathjs.org/
 
 ??		# https://mathjs.org/docs/datatypes/bignumbers.html

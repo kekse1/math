@@ -4,10 +4,10 @@
 # **Mathematical** extensions
 
 ## JavaScript
-**TODO**
+[**TODO**](./js/)
 
 ## Bash Shell
-**TODO**
+[**TODO**](./sh/math.sh)
 
 <br><br>
 

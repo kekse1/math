@@ -31,15 +31,7 @@
 
 		# ich wuerde genre meine sehr haeufig genutzte `bytes()`-funktion der `bash` auch hier mit dazu...
 
-			# ... so als ausnahme eher. ich nutze sie naeml. recht haeufig in der `bash`...
-
-				# .. evtl. mehr daraus machen? `math.sh`??? xD~
-
-			# siehe `./sh.TODO.tmp/`....
-
-!!!1				# ABER NOCHMAL GANZ NEU SCHREIBEN!!
-
-!!1					# UND ZWAR mit `awk` fuer die artithmetik (WICHTIGst!!!1)!!1
+			# dazu die basis-arithmetik bereits @ `sh/math.sh`.. w/ `awk` (important! best.. ;-) ...
 
 ???	# https://mathjs.org/
 

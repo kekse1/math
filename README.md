@@ -18,29 +18,29 @@
 <br><br>
 
 ## Modules
-I'm keeping the different extensions in separate files. The base file [`math.mjs`](./src/math.mjs) will do
-all initialization stuff (including checks against multiple application). The [modules](./src/math/) keep
+I'm keeping the different extensions in separate files. The base file [`math.mjs`](./js/math.mjs) will do
+all initialization stuff (including checks against multiple application). The [modules](./js/math/) keep
 their own `.initialize()` function, which gave me some advantages. Also a better handling of the
-[`default.mjs`](./src/default.mjs) with some basic configuration!
+[`default.mjs`](./js/default.mjs) with some basic configuration!
 
 <br>
 
-* [**`main.mjs`**](./src/math/main.mjs)
-* [`default.mjs`](./src/math/default.mjs)
+* [**`main.mjs`**](./js/math/main.mjs)
+* [`default.mjs`](./js/math/default.mjs)
 
 <br>
 
-* [`clock.mjs`](./src/math/clock.mjs)
-* [`code.mjs`](./src/math/code.mjs)
-* [`date.mjs`](./src/math/date.mjs)
-* [`func.mjs`](./src/math/func.mjs)
-* [`global.mjs`](./src/math/global.mjs)
-* [`helper.mjs`](./src/math/helper.mjs)
-* [`radix.mjs`](./src/math/radix.mjs)
-* [`random.mjs`](./src/math/random.mjs)
-* [`size.mjs`](./src/math/size.mjs)
-* [`time.mjs`](./src/math/time.mjs)
-* [`timeout.mjs`](./src/math/timeout.mjs)
+* [`clock.mjs`](./js/math/clock.mjs)
+* [`code.mjs`](./js/math/code.mjs)
+* [`date.mjs`](./js/math/date.mjs)
+* [`func.mjs`](./js/math/func.mjs)
+* [`global.mjs`](./js/math/global.mjs)
+* [`helper.mjs`](./js/math/helper.mjs)
+* [`radix.mjs`](./js/math/radix.mjs)
+* [`random.mjs`](./js/math/random.mjs)
+* [`size.mjs`](./js/math/size.mjs)
+* [`time.mjs`](./js/math/time.mjs)
+* [`timeout.mjs`](./js/math/timeout.mjs)
 
 <br>
 

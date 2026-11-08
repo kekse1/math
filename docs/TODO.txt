@@ -1,6 +1,4 @@
 
-	# v.a. siehe 'TODO/' als referenz... erstmal.
-
 	# mehr ordnung noch...
 
 		# v.a. die "Reflect.defineProperty()" passend...
@@ -31,9 +29,11 @@
 
 		# ich wuerde genre meine sehr haeufig genutzte `bytes()`-funktion der `bash` auch hier mit dazu...
 
-			# dazu die basis-arithmetik bereits @ `sh/math.sh`.. w/ `awk` (important! best.. ;-) ...
+			# siehe neues 'sh/', etc..!1 ^_^
 
 ???	# https://mathjs.org/
 
 ??		# https://mathjs.org/docs/datatypes/bignumbers.html
+
+		# evtl. paar nette teile, die ich hier/.. braeuchte!? ^_^
 

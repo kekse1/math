@@ -15,9 +15,7 @@
 
 Dependencies: `awk` (default Linux tool) for calculations and comparisons.
 
-<br><br>
-
-# Comment
+<br><br><br>
 
 > [!NOTE]
 > When I talk about the '**radix**' — and I do it often, as I convert between number systems a lot — I mean

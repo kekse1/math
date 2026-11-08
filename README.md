@@ -11,7 +11,7 @@
 <br>
 
 ## Bash Shell
-[**TODO**](./sh/math.sh)
+[**TODO**](./sh/)
 
 Dependencies: `awk` (default Linux tool) for calculations and comparisons.
 

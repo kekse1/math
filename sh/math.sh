@@ -4,7 +4,11 @@
 #
 
 #
-source "./math/arithmetic.sh"
+_real="$(realpath "${BASH_SOURCE[0]}")"
+_dir="$(dirname "$_real")"
+
+#
+source "${_dir}/math/math.sh"
 
 #
 

@@ -8,7 +8,12 @@ _real="$(realpath "${BASH_SOURCE[0]}")"
 _dir="$(dirname "$_real")"
 
 #
-source "${_dir}/math/math.sh"
+source "${_dir}/math/main.sh"
+source "${_dir}/math/util.sh"
+
+source "${_dir}/math/radix.sh"
+source "${_dir}/math/size.sh"
+source "${_dir}/math/time.sh"
 
 #
 

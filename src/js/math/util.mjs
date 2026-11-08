@@ -4,11 +4,11 @@
  */
 
 //
-const	helper = {};
-export	default helper;
+const	util = {};
+export	default util;
 
 //
-helper.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
+util.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	Reflect.defineProperty(globalThis, 'isDataArray', { value: (_item) => {
 		return (_item instanceof TypedArray);
 		//return (_item instanceof Uint8Array ||

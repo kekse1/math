@@ -4,14 +4,14 @@
 # **Mathematical** extensions
 
 ## JavaScript
-[**TODO**](./js/)
+[**TODO**](./src/js/)
 
 **No** dependencies.
 
 <br>
 
 ## Bash Shell
-[**TODO**](./sh/)
+[**TODO**](./src/sh/)
 
 Dependencies: `awk` (default Linux tool) for calculations and comparisons.
 
@@ -29,35 +29,53 @@ Dependencies: `awk` (default Linux tool) for calculations and comparisons.
 <br><br>
 
 ## Modules
-I'm keeping the different extensions in separate files. The base file [`math.mjs`](./js/math.mjs) will do
-all initialization stuff (including checks against multiple application). The [modules](./js/math/) keep
+I'm keeping the different extensions in separate files. The base file [`math.mjs`](./src/js/math.mjs) will do
+all initialization stuff (including checks against multiple application). The [modules](./src/js/math/) keep
 their own `.initialize()` function, which gave me some advantages. Also a better handling of the
-[`default.mjs`](./js/default.mjs) with some basic configuration!
+[`default.mjs`](./src/js/default.mjs) with some basic configuration!
 
 <br>
 
-* [**`main.mjs`**](./js/math/main.mjs)
-* [`default.mjs`](./js/math/default.mjs)
+### [JavaScript](./src/js/)
+
+* [**`main.mjs`**](./src/js/math/main.mjs)
+* [`default.mjs`](./src/js/math/default.mjs)
+
+* [`util.mjs`](./src/js/math/util.mjs)
 
 <br>
 
-* [`clock.mjs`](./js/math/clock.mjs)
-* [`code.mjs`](./js/math/code.mjs)
-* [`date.mjs`](./js/math/date.mjs)
-* [`func.mjs`](./js/math/func.mjs)
-* [`global.mjs`](./js/math/global.mjs)
-* [`helper.mjs`](./js/math/helper.mjs)
-* [`radix.mjs`](./js/math/radix.mjs)
-* [`random.mjs`](./js/math/random.mjs)
-* [`size.mjs`](./js/math/size.mjs)
-* [`time.mjs`](./js/math/time.mjs)
-* [`timeout.mjs`](./js/math/timeout.mjs)
+* [`clock.mjs`](./src/js/math/clock.mjs)
+* [`code.mjs`](./src/js/math/code.mjs)
+* [`date.mjs`](./src/js/math/date.mjs)
+* [`func.mjs`](./src/js/math/func.mjs)
+* [`global.mjs`](./src/js/math/global.mjs)
+* [`radix.mjs`](./src/js/math/radix.mjs)
+* [`random.mjs`](./src/js/math/random.mjs)
+* [`size.mjs`](./src/js/math/size.mjs)
+* [`time.mjs`](./src/js/math/time.mjs)
+* [`timeout.mjs`](./src/js/math/timeout.mjs)
+
+<br>
+
+### [`bash` Shell](./src/sh/)
+
+* [**`math.sh`**](./src/sh/math.sh)
+
+* [`util.sh`](./src/sh/math/util.sh)
+
+<br>
+
+* [**`main.sh`**](./src/sh/math/main.sh)
+* [`radix.sh`](./src/sh/math/radix.sh)
+* [`size.sh`](./src/sh/math/size.sh)
+* [`time.sh`](./src/sh/math/time.sh)
 
 <br>
 
 Most of these modules are still (pure) **TODO**.
 
-See also the [**`test/`**](./test/)s.
+See also the [**`test/`** directory](./test/).
 
 <br><br>
 

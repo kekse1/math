@@ -29,8 +29,8 @@ export	default math;
 import	'./global.mjs';
 
 //
-import	helper from './helper.mjs';
-	math.helper = helper;
+import	util from './util.mjs';
+	math.util = util;
 
 import	func from './func.mjs';
 	math.func = func;

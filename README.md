@@ -6,8 +6,14 @@
 ## JavaScript
 [**TODO**](./js/)
 
+**No** dependencies.
+
+<br>
+
 ## Bash Shell
 [**TODO**](./sh/math.sh)
+
+Dependencies: `awk` (default Linux tool) for calculations and comparisons.
 
 <br><br>
 

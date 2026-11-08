@@ -16,32 +16,32 @@ CMP()
 
 GT()
 {
-	_compare "$1 > $2"
+	CMP "$1 > $2"
 }
 
 GE()
 {
-	_compare "$1 >= $2"
+	CMP "$1 >= $2"
 }
 
 LT()
 {
-	_compare "$1 < $2"
+	CMP "$1 < $2"
 }
 
 LE()
 {
-	_compare "$1 <= $2"
+	CMP "$1 <= $2"
 }
 
 EQ()
 {
-	_compare "$1 == $2"
+	CMP "$1 == $2"
 }
 
 NE()
 {
-	_compare "$1 != $2"
+	CMP "$1 != $2"
 }
 
 #

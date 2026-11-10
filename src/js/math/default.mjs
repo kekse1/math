@@ -15,6 +15,7 @@ DEFAULT.float = true;
 DEFAULT.unsigned = false;
 DEFAULT.endianness = 'b';
 DEFAULT.crypto = false;
+DEFAULT.emptyString = true;
 
 //
 

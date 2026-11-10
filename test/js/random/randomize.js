@@ -4,7 +4,7 @@
 const	COUNT = 8;
 
 //
-import	math from '../../../src/math.mjs';
+import	math from '../../../src/js/math.mjs';
 
 //
 const	a = Math.random.bytes(COUNT),

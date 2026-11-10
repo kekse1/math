@@ -10,7 +10,7 @@ const	COUNT = 12,
 const	ROUND = 6;
 
 //
-import	math from '../../../src/math.mjs';
+import	math from '../../../src/js/math.mjs';
 
 //
 const	test = new Array(COUNT);

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import	math from '../../../src/math.mjs';
+import	math from '../../../src/js/math.mjs';
 
 const	string = [
 		'',

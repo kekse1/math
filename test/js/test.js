@@ -4,7 +4,7 @@
 const	DEPTH = 6;
 
 //
-import	math from '../../src/math.mjs';
+import	math from '../../src/js/math.mjs';
 
 //
 console.dir({ math },

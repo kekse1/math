@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 //
-import	math from '../../../src/math.mjs';
+import	math from '../../../src/js/math.mjs';
 
 //
 const diffTest = '*:*:30:*';
@@ -75,8 +75,8 @@ const RESULT = new Array(TEST.length);
 
 for(var i = 0; i < TEST.length; ++i)
 {
-	RESULT[i] = [ ... TEST[i], Math.time.
-		clock(TEST[i][0]) ];
+	RESULT[i] = [ ... TEST[i], Math.
+		time.clock(TEST[i][0]) ];
 	
 	if(TEST[i][1])
 	{

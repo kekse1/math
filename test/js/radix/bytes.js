@@ -5,7 +5,7 @@ const	COUNT = 8,
 	ROUND = 8;
 
 //
-import	math from '../../../src/math.mjs';
+import	math from '../../../src/js/math.mjs';
 
 //
 const	number = new Array(COUNT),

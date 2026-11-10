@@ -4,7 +4,7 @@
 const	COUNT = 8;
 
 //
-import	math from '../../../src/math.mjs';
+import	math from '../../../src/js/math.mjs';
 
 //
 for(var i = 0; i < COUNT; ++i)

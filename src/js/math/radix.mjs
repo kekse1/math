@@ -670,7 +670,13 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		
 		return true;
 	};
+	
+	//
+	//TODO/w/ big cast "(10n)1234" etc..! ;-)
+	//
+	//Math.parse = (_....
 
+	//
 	Reflect.defineProperty(Number, 'parse', {
 		value: radix.parse.Number,
 		enumerable: true,
@@ -712,40 +718,6 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		writable: false,
 		configurable: false });
 
-	Reflect.defineProperty(globalThis, 'isNumeric', { get: (_value) => {
-		if(typeof _value === 'bigint')
-		{
-			return true;
-		}
-		
-		if(Number.isFinite(_value))
-		{
-			return true;
-		}
-		
-		return false;
-	}});
-	
-	Reflect.defineProperty(Number.prototype, 'isInteger', { get: function()
-	{
-		if(!Number.isFinite(this.valueOf()))
-		{
-			return null;
-		}
-		
-		return ((this.valueOf() % 1) === 0);
-	}});
-	
-	Reflect.defineProperty(Number.prototype, 'isFloat', { get: function()
-	{
-		if(!Number.isFinite(this.valueOf()))
-		{
-			return null;
-		}
-		
-		return ((this.valueOf() % 1) !== 0);
-	}});
-	
 	Reflect.defineProperty(String, 'isNumeric', { value: (_value, _radix = _default.radix) => {
 		if(typeof _value !== 'string')
 		{
@@ -756,6 +728,11 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	}});
 	
 	Reflect.defineProperty(String, 'isInteger', { value: (_value, _radix = _default.radix) => {
+		if(typeof _value !== 'string')
+		{
+			return false;
+		}
+		
 		if(_string.includes('.'))
 		{
 			return false;
@@ -765,6 +742,11 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	}});
 	
 	Reflect.defineProperty(String, 'isFloat', { value: (_value, _radix = _default.radix) => {
+		if(typeof _value !== 'string')
+		{
+			return false;
+		}
+		
 		if(_string.split('.').length !== 2)
 		{
 			return false;

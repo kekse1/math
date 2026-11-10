@@ -35,6 +35,9 @@ import	util from './util.mjs';
 import	func from './func.mjs';
 	math.func = func;
 
+import	numeric from './numeric.mjs';
+	math.numeric = numeric;
+
 import	timeout from './timeout.mjs';
 	math.timeout = timeout;
 

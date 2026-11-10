@@ -105,6 +105,10 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	radix.zigzag.decode.Number = (_n) => (((_n & 1) === 0) ? (_n / 2) : -((_n + 1) / 2));
 	radix.zigzag.decode.BigInt = (_n) => (((_n & 1n) === 0n) ? (_n / 2n) : -((_n + 1n) / 2n));
 
+	Math.zigzag = {
+		encode: radix.zigzag.encode,
+		decode: radix.zigzag.decode };
+
 	Number.zigzag = {};
 	BigInt.zigzag = {};
 	
@@ -802,9 +806,14 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return (_value > RADIX_HALF);
 	};
 	
-	radix.sign = (_string) => {
+	radix.sign = Math.sign = (_string) => {
 		if(typeof _string !== 'string')
 		{
+			if(isNumeric(_string))
+			{
+				return _string;
+			}
+
 			return null;
 		}
 

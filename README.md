@@ -50,6 +50,7 @@ their own `.initialize()` function, which gave me some advantages. Also a better
 * [`date.mjs`](./src/js/math/date.mjs)
 * [`func.mjs`](./src/js/math/func.mjs)
 * [`global.mjs`](./src/js/math/global.mjs)
+* [`numeric.mjs`](./src/js/math/numeric.mjs)
 * [`radix.mjs`](./src/js/math/radix.mjs)
 * [`random.mjs`](./src/js/math/random.mjs)
 * [`size.mjs`](./src/js/math/size.mjs)

@@ -38,7 +38,31 @@ func.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	}});
 
 	//
+	Reflect.defineProperty(Math, 'logBase', { value: func.logBase = (_base, _value) => {
+		var result;
+		
+		if(typeof _value === 'bigint')
+		{
+			var	rest = _value;
+				result = 0;
 
+			while(rest >= _base)
+			{
+				rest /= _base;
+				++result;
+			}
+		}
+		else
+		{
+			result = (Math.log(_value) / Math.log(_base));
+		}
+
+		return result
+	}});
+
+	//
+	//TODO/Math.length() oder so... ^_^
+	//
 };
 
 //

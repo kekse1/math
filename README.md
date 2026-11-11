@@ -13,7 +13,7 @@
 ## Bash Shell
 [**TODO**](./src/sh/)
 
-Dependencies: `awk` (default Linux tool) for calculations and comparisons.
+Dependencies: `awk` (default Linux tool) for arithmetic calculations and comparisons.
 
 <br><br><br>
 
@@ -32,14 +32,14 @@ Dependencies: `awk` (default Linux tool) for calculations and comparisons.
 I'm keeping the different extensions in separate files. The base file [`math.mjs`](./src/js/math.mjs) will do
 all initialization stuff (including checks against multiple application). The [modules](./src/js/math/) keep
 their own `.initialize()` function, which gave me some advantages. Also a better handling of the
-[`default.mjs`](./src/js/default.mjs) with some basic configuration!
+[`DEFAULT.mjs`](./src/js/DEFAULT.mjs) with some basic configuration!
 
 <br>
 
 ### [JavaScript](./src/js/)
 
 * [**`main.mjs`**](./src/js/math/main.mjs)
-* [`default.mjs`](./src/js/math/default.mjs)
+* [`DEFAULT.mjs`](./src/js/math/DEFAULT.mjs)
 
 * [`util.mjs`](./src/js/math/util.mjs)
 

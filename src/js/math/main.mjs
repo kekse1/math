@@ -9,7 +9,7 @@ const
 	DEFAULT_INITIALIZE = true;
 
 //
-import	DEFAULT from './default.mjs';
+import	DEFAULT from './DEFAULT.mjs';
 
 //
 const	math =	{

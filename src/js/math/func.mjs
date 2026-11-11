@@ -13,6 +13,7 @@ func.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	Reflect.defineProperty(Math, '_round',
 		Reflect.getOwnPropertyDescriptor(Math, 'round'));
 	Reflect.defineProperty(Math, 'round', { value: (_value, _precision = _default.round || 0) => {
+		if(typeof _value === 'bigint') return _value;
 		const coefficient = Math.pow(10, _precision);
 		return ((Math._round(_value * coefficient) / coefficient) || 0);
 	}});
@@ -20,6 +21,7 @@ func.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	Reflect.defineProperty(Math, '_floor',
 		Reflect.getOwnPropertyDescriptor(Math, 'floor'));
 	Reflect.defineProperty(Math, 'floor', { value: (_value, _precision = _default.round || 0) => {
+		if(typeof _value === 'bigint') return _value;
 		const coefficient = Math.pow(10, _precision || 0);
 		return ((Math._floor(_value * coefficient) / coefficient) || 0);
 	}});
@@ -27,6 +29,7 @@ func.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	Reflect.defineProperty(Math, '_ceil',
 		Reflect.getOwnPropertyDescriptor(Math, 'ceil'));
 	Reflect.defineProperty(Math, 'ceil', { value: (_value, _precision = _default.round || 0) => {
+		if(typeof _value === 'bigint') return _value;
 		const coefficient = Math.pow(10, _precision || 0);
 		return ((Math._ceil(_value * coefficient) / coefficient) || 0);
 	}});
@@ -38,31 +41,90 @@ func.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	}});
 
 	//
-	Reflect.defineProperty(Math, 'logBase', { value: func.logBase = (_base, _value) => {
+	Reflect.defineProperty(Math, 'logBase', { value: func.logBase = (_value, _radix = _default.radix) => {
 		var result;
 		
 		if(typeof _value === 'bigint')
 		{
-			var	rest = _value;
-				result = 0;
-
-			while(rest >= _base)
+			if(_value === 0n)
 			{
-				rest /= _base;
-				++result;
+				result = 0n;
 			}
+			else
+			{
+				_radix = BigInt.from(_radix ||
+						_default.radix);
+
+				var	rest = Math.abs(_value),
+					result = 0n;
+
+				while(rest >= _radix)
+				{
+					rest /= _radix;
+					++result;
+				}
+			}
+		}
+		else if(Number.isFinite(_value))
+		{
+			if(_value === 0)
+			{
+				result = 0;
+			}
+			else
+			{
+				result = (Math.log(Math.abs(_value)) /
+						Math.log(Number(_radix ||
+							_default.radix)));
+			}
+		}
+		else if(_default.throw)
+		{
+			throw new Error('Expecting numeric argument');
 		}
 		else
 		{
-			result = (Math.log(_value) / Math.log(_base));
+			result = null;
 		}
 
-		return result
+		return result;
 	}});
 
 	//
-	//TODO/Math.length() oder so... ^_^
+	Reflect.defineProperty(Math, '_abs',
+		Reflect.getOwnPropertyDescriptor(Math, 'abs'));
+	Reflect.defineProperty(Math, 'abs', { value: func.abs = (_value) => {
+		var result;
+
+		if(Number.isFinite(_value))
+		{
+			result = Math._abs(_value);
+		}
+		else if(typeof _value === 'bigint')
+		{
+			if(_value >= 0n)
+			{
+				result = _value;
+			}
+			else
+			{
+				result = -_value;
+			}
+		}
+		else if(_default.throw)
+		{
+			throw new Error('Expecting a numeric parameter');
+		}
+		else
+		{
+			result = null;
+		}
+
+		return (result || 0);
+	}});
+
 	//
+
 };
 
 //

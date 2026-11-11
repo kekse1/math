@@ -17,8 +17,7 @@ const	number = new Array(COUNT),
 //
 for(var i = 0; i < COUNT; ++i)
 {
-	number[i] = Math.random.int(
-			65535, -65536);
+	number[i] = Math.random.int();
 	bigInt[i] = BigInt(number[i]);
 }
 

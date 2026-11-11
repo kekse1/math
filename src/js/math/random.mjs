@@ -41,16 +41,33 @@ random.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 					random(_crypto = _default.crypto) >= 0.5);
 	random.bool.crypto = Math.random.bool.crypto = () => random.bool(true);
 
-	random.int = Math.random.int = (_max = 255, _min = 0, _inclusive = true, _crypto = _default.crypto) => {
+	random.int = Math.random.int = (_max = Number.MAX, _min = Number.MIN, _inclusive = true, _crypto = _default.crypto) => {
 		[ _max, _min ] = [
 			Math.trunc(Math.max(_max, _min)),
 			Math.trunc(Math.min(_min, _max)) ];
 		return ((Math.floor(Math.random(_crypto = _default.crypto) *
 			(_max - _min + (_inclusive ? 1 : 0))) + _min) || 0);
 	};
+
+	random.uint = Math.random.uint = (_max = Number.MAX, _min = 0, _inclusive = true, _crypto = _default.crypto) => {
+		return random.int(_max, Math.max(0, _min), _inclusive, _crypto);
+	};
 	
 	random.int.crypto = Math.random.int.crypto =
 		(... _args) => random.int(... _args.slice(0, 3), true);
+	random.uint.crypto = Math.random.uint.crypto = (_max = Number.MAX, _inclusive = true, _crypto = _default.crypto) => random.
+						int(_max, 0, _inclusive, _crypto);
+
+	random.byte = Math.random.byte = (_max = 255, _min = 0, _crypto = _default.crypto) => {
+		if(_max <= 0)		_max = 0;
+		else if(_max > 255)	_max = 255;
+		if(_min <= 0)		_min = 0;
+		else if(_min > 255)	_min = 255;
+		return random.int(_max, _min,
+				true, _crypto);
+	};
+
+	random.byte.crypto = Math.random.byte.crypto = (_max = 255, _min = 0) => random.byte(_max, _min, true);
 
 	random.float = Math.random.float = (_max = 255, _min = 0, _inclusive = false, _crypto = _default.crypto) => {
 		[ _max, _min ] = [
@@ -68,6 +85,8 @@ random.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		return crypto.getRandomValues(
 			new Uint8Array(_count || 1));
 	};
+
+	random.bytes.crypto = Math.random.bytes.crypto = random.bytes;
 
 	// always crypto..
 	random.string = Math.random.string = (_count = 1) => {
@@ -90,26 +109,34 @@ throw new Error('TODO');
 		return random.fromString(_count, _string, true);
 	};
 
-	random.bytes.crypto = Math.random.bytes.crypto = random.bytes;
-
-	random.color = Math.random.color = (_alpha = false) => {
+	random.color = Math.random.color = (_alpha = false, _crypto = _default.crypto) => {
 		const result = new Array(_alpha ? 4 : 3);
 
 		for(var i = 0; i < result.length; ++i)
 		{
-			result[i] = Math.random.int(255, 0);
+			result[i] = Math.random.byte(255, 0, _crypto);
 		}
 
 		return result;
 	};
 
+	random.color.crypto = Math.random.color.crypto =
+		(_alpha = false) => random.color(_alpha, true);
+
 	random.radix = Math.random.radix = (_max = Number.RADIX_MAX, _min = Number.RADIX_MIN, _crypto = _default.crypto) => {
+		if(_max <= Number.RADIX_MIN)	_max = Number.RADIX_MIN;
+		else if(_max > Number.RADIX_MAX)_max = Number.RADIX_MAX;
+		if(_min <= Number.RADIX_MIN)	_min = Number.RADIX_MIN;
+		else if(_min > Number.RADIX_MAX)_max = Number.RADIX_MAX;
 		return Math.random.int(_max, _min, true, _crypto);
 	};
 
+	random.radix.crypto = Math.random.radix.crypto =
+		(_max = Number.RADIX_MAX, _min = Number.RADIX_MIN) => random.
+							radix(_max, _min, true);
+
 	//
-	// 'Knuth-Shuffle'- bzw. 'Fisher-Yates-Shuffle'-algo!
-	//	.. a great thing. :-) ...
+	// 'Knuth-Shuffle'- bzw. 'Fisher-Yates-Shuffle'-alg! great one. :-D
 	//
 	random.randomize = (_array, _crypto = _default.crypto) => {
 		var	a, b;

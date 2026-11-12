@@ -43,10 +43,20 @@ func.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	//
 	Reflect.defineProperty(Math, 'logBase', { value: func.logBase = (_value, _radix = _default.radix) => {
 		var result;
+
+		if(!isNumeric(_radix))
+		{
+			if(_default.throw)
+			{
+				throw new Error('Invalid _radix argument');
+			}
+
+			_radix = null;
+		}
 		
 		if(typeof _value === 'bigint')
 		{
-			if(_value === 0n)
+			if(_value === 0n || _radix === null)
 			{
 				result = 0n;
 			}
@@ -67,7 +77,7 @@ func.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		}
 		else if(Number.isFinite(_value))
 		{
-			if(_value === 0)
+			if(_value === 0 || _radix === null)
 			{
 				result = 0;
 			}

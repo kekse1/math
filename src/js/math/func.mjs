@@ -41,51 +41,43 @@ func.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	}});
 
 	//
-	Reflect.defineProperty(Math, 'logBase', { value: func.logBase = (_value, _radix = _default.radix) => {
+	Reflect.defineProperty(Math, 'logBase', { value: func.logBase = (_value, _base) => {
 		var result;
 
-		if(!isNumeric(_radix))
+		if(!isNumeric(_base) || !_base)
 		{
-			if(_default.throw)
-			{
-				throw new Error('Invalid _radix argument');
-			}
-
-			_radix = null;
+			_base = 0;
 		}
 		
 		if(typeof _value === 'bigint')
 		{
-			if(_value === 0n || _radix === null)
+			if(_value === 0n || !_base)
 			{
 				result = 0n;
 			}
 			else
 			{
-				_radix = BigInt.from(_radix ||
-						_default.radix);
-
 				var	rest = Math.abs(_value),
 					result = 0n;
+				_base = BigInt.from(_base);
 
-				while(rest >= _radix)
+				while(rest >= _base)
 				{
-					rest /= _radix;
+					rest /= _base;
 					++result;
 				}
 			}
 		}
 		else if(Number.isFinite(_value))
 		{
-			if(_value === 0 || _radix === null)
+			if(_value === 0 || !_base)
 			{
 				result = 0;
 			}
 			else
 			{
 				result = (Math.log(Math.abs(_value)) /
-						Math.log(Number(_radix ||
-							_default.radix)));
+					Math.log(Number(_base)));
 			}
 		}
 		else if(_default.throw)

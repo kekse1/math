@@ -394,25 +394,30 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 
 			const	[ a, b, negative, rdx ] = prepared;
 			var	result = 0,
-				mul = 1,
-				index;
+				index,
+				mul;
 
-			for(var i = a.length - 1; i >= 0; --i)
+			if(a)
 			{
-				index = LOOKUP[a.charCodeAt(i)];
+				mul = 1;
 				
-				if((index + 1) > rdx)
+				for(var i = a.length - 1; i >= 0; --i)
 				{
-					if(_throw)
-					{
-						throw new Error('Invalid character[' + i + ']');
-					}
-					
-					return null;
-				}
+					index = LOOKUP[a.charCodeAt(i)];
 				
-				result += (index * mul);
-				mul *= rdx;
+					if((index + 1) > rdx)
+					{
+						if(_throw)
+						{
+							throw new Error('Invalid character[' + i + ']');
+						}
+					
+						return null;
+					}
+				
+					result += (index * mul);
+					mul *= rdx;
+				}
 			}
 
 			if(b && _float)
@@ -438,9 +443,9 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				}
 			}
 
-			if(negative && result)
+			if(negative)
 			{
-				result = (-result || 0);
+				result = -result;
 			}
 			
 			return result;	
@@ -461,30 +466,35 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			const	[ a, b, negative, rdx ] = prepared,
 				big = BigInt(rdx);
 			var	result = 0n,
-				mul = 1n,
-				index;
+				index,
+				mul;
 
-			for(var i = a.length - 1; i >= 0; --i)
+			if(a)
 			{
-				index = LOOKUP[a.charCodeAt(i)];
+				mul = 1n;
 				
-				if((index + 1) > rdx)
+				for(var i = a.length - 1; i >= 0; --i)
 				{
-					if(_throw)
-					{
-						throw new Error('Invalid character[' + i + ']');
-					}
-					
-					return null;
-				}
+					index = LOOKUP[a.charCodeAt(i)];
 				
-				result += (BigInt(index) * mul);
-				mul *= big;
+					if((index + 1) > rdx)
+					{
+						if(_throw)
+						{
+							throw new Error('Invalid character[' + i + ']');
+						}
+					
+						return null;
+					}
+				
+					result += (BigInt(index) * mul);
+					mul *= big;
+				}
 			}
 
-			if(negative && result)
+			if(negative)
 			{
-				result = (-result || 0);
+				result = -result;
 			}
 			
 			return result;
@@ -562,7 +572,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			while(rest % 1);
 		}
 		
-		if(negative && result)
+		if(negative)
 		{
 			result = ('-' + result);
 		}
@@ -599,7 +609,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		
 		if(negative)
 		{
-			rest = (-rest || 0n);
+			rest = _value = (-rest || 0n);
 		}
 
 		do
@@ -610,7 +620,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		}
 		while(rest >= 1n);
 		
-		if(negative && result)
+		if(negative)
 		{
 			result = ('-' + result);
 		}

@@ -42,51 +42,34 @@ func.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 
 	//
 	Reflect.defineProperty(Math, 'logBase', { value: func.logBase = (_value, _base) => {
+		if(!isNumeric(_base) || !isNumeric(_value) || !_base || !_value)
+		{
+			if(typeof _value === 'bigint')
+			{
+				return 0n;
+			}
+
+			return 0;
+		}
+
 		var result;
 
-		if(!isNumeric(_base) || !_base)
-		{
-			_base = 0;
-		}
-		
 		if(typeof _value === 'bigint')
 		{
-			if(_value === 0n || !_base)
-			{
-				result = 0n;
-			}
-			else
-			{
-				var	rest = Math.abs(_value),
-					result = 0n;
-				_base = BigInt.from(_base);
+			var rest = Math.abs(_value);
+			_base = BigInt.from(_base);
+			result = 0n;
 
-				while(rest >= _base)
-				{
-					rest /= _base;
-					++result;
-				}
-			}
-		}
-		else if(Number.isFinite(_value))
-		{
-			if(_value === 0 || !_base)
+			while(rest >= _base)
 			{
-				result = 0;
+				rest /= _base;
+				++result;
 			}
-			else
-			{
-				result = (Math.log(Math.abs(_value)) /
-					Math.log(Number(_base)));
-			}
-		}
-		else if(_default.throw)
-		{
-			throw new Error('Expecting numeric argument');
 		}
 		else
 		{
-			result = null;
+			result = (Math.log(Math.abs(_value)) /
+				Math.log(Number(_base)));
 		}
 
 		return result;

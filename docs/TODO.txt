@@ -31,6 +31,14 @@
 
 			# siehe neues 'sh/', etc..!1 ^_^
 
+	@ random
+
+		# effizienter @ crypto
+
+			# bspw. random.byte();
+
+			# .. wenn nicht beide uint16 noetig sind, etc..
+
 ???	# https://mathjs.org/
 
 ??		# https://mathjs.org/docs/datatypes/bignumbers.html

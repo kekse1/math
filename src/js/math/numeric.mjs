@@ -96,7 +96,15 @@ numeric.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 	Reflect.defineProperty(BigInt, 'from', { value: (_value, _radix = _default.radix) => {
 		var result;
 
-		if(typeof _value === 'string')
+		if(typeof _value === 'bigint')
+		{
+			result = _value;
+		}
+		else if(Number.isFinite(_value))
+		{
+			result = BigInt(Math.trunc(_value));
+		}
+		else if(typeof _value === 'string')
 		{
 			if(_value.length === 0)
 			{
@@ -116,17 +124,9 @@ numeric.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				throw new Error('TODO (w/ `radix.mjs`)');
 			}
 		}
-		else if(Number.isFinite(_value))
-		{
-			result = BigInt(Math.trunc(_value));
-		}
-		else if(typeof _value === 'bigint')
-		{
-			result = _value;
-		}
 		else
 		{
-			throw new Error('TODO (w/ `radix.mjs`)');
+			result = 0n;
 		}
 
 		return result;

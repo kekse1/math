@@ -39,6 +39,8 @@
 
 			# .. wenn nicht beide uint16 noetig sind, etc..
 
+!!?			# evtl sowas wie ’logBase(max - min, 256)`? ^_^
+
 ???	# https://mathjs.org/
 
 ??		# https://mathjs.org/docs/datatypes/bignumbers.html

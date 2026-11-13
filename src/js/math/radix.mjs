@@ -438,7 +438,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				}
 			}
 
-			if(negative)
+			if(negative && result)
 			{
 				result = (-result || 0);
 			}
@@ -482,7 +482,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 				mul *= big;
 			}
 
-			if(negative)
+			if(negative && result)
 			{
 				result = (-result || 0);
 			}
@@ -562,7 +562,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 			while(rest % 1);
 		}
 		
-		if(negative)
+		if(negative && result)
 		{
 			result = ('-' + result);
 		}
@@ -610,7 +610,7 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		}
 		while(rest >= 1n);
 		
-		if(negative)
+		if(negative && result)
 		{
 			result = ('-' + result);
 		}
@@ -924,6 +924,11 @@ radix.initialize = (_math = globalThis.math, _default = _math.DEFAULT) => {
 		{
 			a = a.toLowerCase();
 			b = b.toLowerCase();
+		}
+
+		if(!a)
+		{
+			negative = false;
 		}
 		
 		return [ a, b, negative, _radix ];

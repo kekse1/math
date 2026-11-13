@@ -109,19 +109,10 @@ throw new Error('TODO');
 		return random.fromString(_count, _string, true);
 	};
 
-	random.color = Math.random.color = (_alpha = false, _crypto = _default.crypto) => {
-		const result = new Array(_alpha ? 4 : 3);
-
-		for(var i = 0; i < result.length; ++i)
-		{
-			result[i] = Math.random.byte(255, 0, _crypto);
-		}
-
-		return result;
+	random.color = Math.random.color = (_alpha = false) => {
+		return [ ... crypto.getRandomValues(
+			new Uint8Array(_alpha ? 4 : 3)) ];
 	};
-
-	random.color.crypto = Math.random.color.crypto =
-		(_alpha = false) => random.color(_alpha, true);
 
 	random.radix = Math.random.radix = (_max = Number.RADIX_MAX, _min = Number.RADIX_MIN, _crypto = _default.crypto) => {
 		if(_max <= Number.RADIX_MIN)	_max = Number.RADIX_MIN;
